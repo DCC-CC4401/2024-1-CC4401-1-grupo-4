@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Publicar un mensaje</title>
+</head>
+<body>
+    <h1>¿Cual es tu consulta?</h1>
+
+    <form method="POST" action=""></form>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html>

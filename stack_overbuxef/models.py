@@ -8,6 +8,9 @@ from django.core.files.storage import FileSystemStorage
 fsPhotos = FileSystemStorage(location="/media/Fotos_usuarios")
 fsMedia = FileSystemStorage(location="/media/Multimedia")
 
+options = [[0, "No anónimo"],
+             [1, "Anónimo"]]
+
 class Tag(models.Model):
     nombre=models.CharField(max_length=50)
     def __str__(self):
@@ -26,7 +29,7 @@ class Consulta(models.Model):
     fecha_creacion=models.DateTimeField(default=timezone.now().strftime("%Y-%m-%d"))
     mensaje=models.TextField(blank=False,null=False)
     creador=models.ForeignKey(Usuario, blank=False, null=False,on_delete=models.CASCADE)
-    anonimo=models.CharField(null=False,blank=False,default="NoAnonimo",max_length=20)
+    anonimo=models.BooleanField(null=False,default=0)
     tag=models.ForeignKey(Tag,on_delete=models.CASCADE)
     multimedia=models.FileField(storage=fsMedia)
 class Respuesta(models.Model):

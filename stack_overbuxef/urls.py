@@ -6,5 +6,5 @@ urlpatterns = [
     # path('login',views.login_user, name='login'),
     # path('logout',views.logout_user, name='logout'),
     # path('forum',views.logout_user, name='forum'),
-    # path('message',views.logout_user, name='message'),
+    path('message',views.publish_messaje, name='message'),
 ]
