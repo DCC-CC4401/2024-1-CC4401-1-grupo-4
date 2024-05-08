@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 
 def register_user(request):
     if request.method == 'GET': #Si estamos cargando la página
-        return render(request, "stack_overbuxef/register_user.html") #Mostrar el template
+        return render(request, "register_user.html") #Mostrar el template
 
 #     elif request.method == 'POST': #Si estamos recibiendo el form de registro
 
@@ -26,7 +26,7 @@ def register_user(request):
 from django.contrib.auth import authenticate, login
 def login_user(request):
     if request.method == 'GET':
-        return render(request, "stack_overbuxef/login.html")
+        return render(request, "login.html")
     if request.method == 'POST':
         username = request.POST['username']
         contraseña = request.POST['contraseña']
