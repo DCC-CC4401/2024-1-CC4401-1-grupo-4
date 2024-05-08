@@ -20,7 +20,7 @@ mimetypes.add_type("text/css", ".css", True)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -61,7 +61,7 @@ ROOT_URLCONF = 'stack_overbuxef.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates")],
+        'DIRS': [os.path.join(BASE_DIR, "stack_overbuxef/templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,4 +135,4 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 # https://warehouse.python.org/project/whitenoise/
 #STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-# AUTH_USER_MODEL = 'stack_overbuxef.User'
+AUTH_USER_MODEL = 'stack_overbuxef.Usuario'

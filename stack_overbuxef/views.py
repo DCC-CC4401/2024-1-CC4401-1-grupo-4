@@ -1,8 +1,13 @@
 # Create your views here.
 from django.shortcuts import render, redirect
-
+from .forms import ConsultaForm
 # Create your views here.
 from django.http import HttpResponseRedirect
+
+def publish_message(request):
+    if request.method == "GET":
+        form = ConsultaForm()
+        return render(request, 'stack_overbuxef/publish.html', {'form': form})
 
 def register_user(request):
     if request.method == 'GET': #Si estamos cargando la página

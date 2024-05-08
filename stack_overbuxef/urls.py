@@ -6,5 +6,5 @@ urlpatterns = [
     path('register', views.register_user, name='register_user'),
     # path('logout',views.logout_user, name='logout'),
     # path('forum',views.logout_user, name='forum'),
-    # path('message',views.logout_user, name='message'),
+    path('message',views.publish_message, name='message'),
 ]
