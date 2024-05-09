@@ -8,8 +8,7 @@ from django.core.files.storage import FileSystemStorage
 fsPhotos = FileSystemStorage(location="/media/Fotos_usuarios")
 fsMedia = FileSystemStorage(location="/media/Multimedia")
 
-options = [[0, "No anónimo"],
-             [1, "Anónimo"]]
+options = [[0, "No anónimo"], [1, "Anónimo"]]
 
 class Tag(models.Model):
     nombre=models.CharField(max_length=50)
@@ -27,9 +26,8 @@ class Usuario(AbstractUser):
         ("AU", "Auxiliar"),
         ("PR", "Profesor"),
     ]
-    contrasenha=models.CharField(max_length=100)
-    tipo=models.CharField(choices=options, max_length=2)
-    foto=models.ImageField(storage=fsPhotos, blank=True)
+    tipo = models.CharField(choices=options, max_length=2)
+    foto = models.ImageField(storage=fsPhotos, blank=True)
     # rol=models.ForeignKey(Rol,blank=False,null=False,on_delete=models.PROTECT)
 
 class Consulta(models.Model):
