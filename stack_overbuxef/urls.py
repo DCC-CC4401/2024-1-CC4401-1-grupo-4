@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib import admin
 from . import views
 
 urlpatterns = [
@@ -7,4 +8,5 @@ urlpatterns = [
     # path('logout',views.logout_user, name='logout'),
     # path('forum',views.logout_user, name='forum'),
     path('message',views.publish_message, name='message'),
+    path("admin/", admin.site.urls),
 ]

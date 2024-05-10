@@ -1,9 +1,9 @@
-# Create your views here.
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect
 from .forms import ConsultaForm
 from .models import Usuario
 # Create your views here.
-from django.http import HttpResponseRedirect
 
 def publish_message(request):
     if request.method == "GET":
@@ -26,19 +26,23 @@ def register_user(request):
         #Crear el nuevo usuario
         user = Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=foto)
 
-        #Redireccionar la página /tareas
+        #Redireccionar la página de /login
         return HttpResponseRedirect('/')
 
-from django.contrib.auth import authenticate, login
 def login_user(request):
     if request.method == 'GET':
         return render(request, "login.html")
     if request.method == 'POST':
         username = request.POST['username']
-        contraseña = request.POST['contraseña']
-        usuario = authenticate(username=username, password=contraseña)
+        contrasenha = request.POST['contraseña']
+        usuario = authenticate(username=username, password=contrasenha)
         if usuario is not None:
             login(request, usuario)
-            return HttpResponseRedirect('/forum')
+            # Por mientras va directamente a message, debe ser cambiado a '/forum' cuando este implementado
+            return HttpResponseRedirect('/message') 
         else:
             return HttpResponseRedirect('/register')
+        
+# def logout_user(request):
+#     logout(request)
+#     return HttpResponseRedirect('/')
