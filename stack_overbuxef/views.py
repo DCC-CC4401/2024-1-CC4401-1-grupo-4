@@ -8,6 +8,11 @@ def publish_messaje(request):
     if request.method == "GET":
         form = ConsultaForm()
         return render(request, 'publish.html', {'form': form})
+    
+def forum(request):
+    if request.method == "GET":
+        return render(request, "forum.html")
+
 
 # def register_user(request):
 #     if request.method == 'GET': #Si estamos cargando la página
