@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Publicar un mensaje</title>
+</head>
+<body>
+    <a href="{% url 'forum' %}"><button>Volver a la página inicial</button></a>
+    <h1>¿Cual es tu consulta?</h1>
+
+    <form method="POST" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html>
