@@ -30,8 +30,8 @@ class Consulta(models.Model):
     mensaje=models.TextField(blank=False,null=False)
     creador=models.ForeignKey(Usuario, blank=False, null=False,on_delete=models.CASCADE)
     anonimo=models.BooleanField(null=False,default=0)
-    tag=models.ForeignKey(Tag,on_delete=models.CASCADE)
-    multimedia=models.FileField(storage=fsMedia)
+    multimedia = models.FileField(storage=fsMedia, blank=True, null=True) 
+
 class Respuesta(models.Model):
     mensaje=models.TextField(blank=False,null=False)
     creador=models.ForeignKey(Usuario,blank=False,null=False,on_delete=models.CASCADE)

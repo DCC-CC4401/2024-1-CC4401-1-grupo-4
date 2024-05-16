@@ -2,12 +2,23 @@
 from django.shortcuts import render, redirect
 from .forms import ConsultaForm
 # Create your views here.
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 
 def publish_message(request):
     if request.method == "GET":
         form = ConsultaForm()
         return render(request, 'stack_overbuxef/publish.html', {'form': form})
+    if request.method == "POST":
+        form = ConsultaForm(request.POST)
+        if form.is_valid():
+            consulta = form.save(commit= False)
+            consulta.creador_id = 1
+            consulta.tag_id = 1
+            consulta.save()
+            return redirect('forum')
+        return "It was not valid"
+    else:
+        return "It was not a POST request"
 
 # def register_user(request):
 #     if request.method == 'GET': #Si estamos cargando la página
@@ -42,6 +53,9 @@ def publish_message(request):
 #         else:
 #             return HttpResponseRedirect('/register')
 
+
+def forum(request):
+    return HttpResponse("Hello world")
 
 # def logout_user(request):
 #     logout(request)
