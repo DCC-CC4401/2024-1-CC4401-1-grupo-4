@@ -4,11 +4,24 @@ from django.http import HttpResponseRedirect
 from .forms import ConsultaForm
 from .models import Usuario
 # Create your views here.
+from django.http import HttpResponse
+
 
 def publish_message(request):
     if request.method == "GET":
         form = ConsultaForm()
-        return render(request, 'publish.html', {'form': form})
+        return render(request, 'stack_overbuxef/publish.html', {'form': form})
+    if request.method == "POST":
+        form = ConsultaForm(request.POST)
+        if form.is_valid():
+            consulta = form.save(commit= False)
+            consulta.creador_id = 1
+            consulta.tag_id = 1
+            consulta.save()
+            return redirect('forum')
+        return "It was not valid"
+    else:
+        return "It was not a POST request"
     
 def forum(request):
     if request.method == "GET":

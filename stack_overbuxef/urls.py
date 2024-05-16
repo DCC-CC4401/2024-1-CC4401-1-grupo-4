@@ -7,7 +7,6 @@ urlpatterns = [
     path('register', views.register_user, name='register_user'),
     # path('logout',views.logout_user, name='logout'),
     path('forum',views.forum, name='forum'),
-    # path('forum',views.logout_user, name='forum'),
     path('message',views.publish_message, name='message'),
     path("admin/", admin.site.urls),
 ]
