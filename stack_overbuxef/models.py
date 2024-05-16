@@ -8,25 +8,34 @@ from django.core.files.storage import FileSystemStorage
 fsPhotos = FileSystemStorage(location="/media/Fotos_usuarios")
 fsMedia = FileSystemStorage(location="/media/Multimedia")
 
+options = [[0, "No anónimo"], [1, "Anónimo"]]
+
 class Tag(models.Model):
     nombre=models.CharField(max_length=50)
     def __str__(self):
-        return self.nombre  
+        return self.nombre
+
 class Rol(models.Model):
     rol=models.CharField(max_length=20)
     def __str__(self):
         return self.rol  
 
 class Usuario(AbstractUser):
-    foto=models.ImageField(storage=fsPhotos)
-    rol=models.ForeignKey(Rol,blank=False,null=False,on_delete=models.PROTECT)
-    
+    options = [
+        ("ES", "Estudiante"),
+        ("AU", "Auxiliar"),
+        ("PR", "Profesor"),
+    ]
+    tipo = models.CharField(choices=options, max_length=2)
+    foto = models.ImageField(storage=fsPhotos, blank=True)
+    # rol=models.ForeignKey(Rol,blank=False,null=False,on_delete=models.PROTECT)
+
 class Consulta(models.Model):
     titulo=models.CharField(blank=False, null=False,max_length=100)
     fecha_creacion=models.DateTimeField(default=timezone.now().strftime("%Y-%m-%d"))
     mensaje=models.TextField(blank=False,null=False)
     creador=models.ForeignKey(Usuario, blank=False, null=False,on_delete=models.CASCADE)
-    anonimo=models.CharField(null=False,blank=False,default="NoAnonimo",max_length=20)
+    anonimo=models.BooleanField(null=False,default=0)
     tag=models.ForeignKey(Tag,on_delete=models.CASCADE)
     multimedia=models.FileField(storage=fsMedia)
 class Respuesta(models.Model):
@@ -44,7 +53,3 @@ class Consulta_respuesta(models.Model):
 class Consulta_tag(models.Model):
     consulta=models.ForeignKey(Consulta,blank=False,null=False,on_delete=models.CASCADE)
     tag=models.ForeignKey(Tag,on_delete=models.CASCADE)
-
-
-
-
