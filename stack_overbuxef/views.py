@@ -5,8 +5,9 @@ from .forms import ConsultaForm
 from .models import Usuario
 # Create your views here.
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
-
+@login_required(login_url='/')
 def publish_message(request):
     if request.method == "GET":
         form = ConsultaForm()
@@ -22,7 +23,8 @@ def publish_message(request):
         return "It was not valid"
     else:
         return "It was not a POST request"
-    
+
+@login_required(login_url='/')
 def forum(request):
     if request.method == "GET":
         return render(request, "forum.html")
@@ -56,8 +58,6 @@ def login_user(request):
         usuario = authenticate(username=username, password=contrasenha)
         if usuario is not None:
             login(request, usuario)
-            # Por mientras va directamente a message, debe ser cambiado a '/forum' cuando este implementado
-            return HttpResponseRedirect('/message') 
+            return HttpResponseRedirect('/forum') 
         else:
             return HttpResponseRedirect('/register')
-        
