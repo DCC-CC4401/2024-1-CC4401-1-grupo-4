@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forum</title>
+    <!-- link para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body> <!-- Interfaz sin funcionalidad -->
+    <header>
+        <div>
+            <h1>Stack Overbuxef</h1>
+        </div>
+        <div>
+            <div>
+                <select id="departamento" name="departamento" required onchange="mostrarTexto()">
+                    <option value="GENERAL">General</option>
+                    <option value="DCC">DCC</option>
+                    <option value="DIM">DIM</option>
+                    <option value="DIE">DIE</option>
+                    <option value="DIC">DIC</option>
+                </select>
+                <input type="text" name="" placeholder="Busqué una pregunta">
+                <button><i class="fa fa-search"></i></button>
+            </div>
+            <button>Publicar</button>
+        </div>
+    </header>        
+        <div>
+            <div id="resultado">
+                <h2 id="textoSeleccionado">General</h2>
+            </div>
+            <hr>
+            <div>
+                <div>
+                    <i class="fa fa-user-circle center"> <a href="">Hipervinculo al usuario</a></i>
+                </div>
+                <div>
+                    <h4><a>Título o asunto de la consulta</a></h4>
+                    <p>Descripción de la consulta </p>
+                </div>
+                <div>
+                    <p>24 <i class="fa fa-arrow-circle-up"></i> | 12 <i class="fa fa-arrow-circle-down"></i></p>
+                </div>
+                <div>
+                    <small>Publicada el 24 de Diciembre del 2024</small>
+                </div>
+                <div>
+                    <button><i class="fa fa-sort-desc"></i> Respuestas</button><button><i class="fa fa-reply"></i> Responder</button>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <div>
+                    <i class="fa fa-user-circle center"> <a href="">Hipervinculo al usuario</a></i>
+                </div>
+                <div>
+                    <h4><a>Título o asunto de la consulta</a></h4>
+                    <p>Descripción de la consulta </p>
+                </div>
+                <div>
+                    <p>24 <i class="fa fa-arrow-circle-up"></i> | 12 <i class="fa fa-arrow-circle-down"></i></p>
+                </div>
+                <div>
+                    <small>Publicada el 24 de Diciembre del 2024</small>
+                </div>
+                <div>
+                    <button><i class="fa fa-sort-desc"></i> Respuestas</button><button><i class="fa fa-reply"></i> Responder</button>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <div>
+                    <i class="fa fa-user-circle center"> <a href="">Hipervinculo al usuario</a></i>
+                </div>
+                <div>
+                    <h4><a>Título o asunto de la consulta</a></h4>
+                    <p>Descripción de la consulta </p>
+                </div>
+                <div>
+                    <p>24 <i class="fa fa-arrow-circle-up"></i> | 12 <i class="fa fa-arrow-circle-down"></i></p>
+                </div>
+                <div>
+                    <small>Publicada el 24 de Diciembre del 2024</small>
+                </div>
+                <div>
+                    <button><i class="fa fa-sort-desc"></i> Respuestas</button><button><i class="fa fa-reply"></i> Responder</button>
+                </div>
+            </div>
+            <hr>
+            <div>
+                <div>
+                    <i class="fa fa-user-circle center"> <a href="">Hipervinculo al usuario</a></i>
+                </div>
+                <div>
+                    <h4><a>Título o asunto de la consulta</a></h4>
+                    <p>Descripción de la consulta </p>
+                </div>
+                <div>
+                    <p>24 <i class="fa fa-arrow-circle-up"></i> | 12 <i class="fa fa-arrow-circle-down"></i></p>
+                </div>
+                <div>
+                    <small>Publicada el 24 de Diciembre del 2024</small>
+                </div>
+                <div>
+                    <button><i class="fa fa-sort-desc"></i> Respuestas</button><button><i class="fa fa-reply"></i> Responder</button>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+
+    <script> // DEJAR FUNCIÓN JAVASCRIPT EN ARCHIVO SEPARADO MÁS ADELANTE
+        function mostrarTexto() {
+            // Obtener el elemento <select>
+            const select = document.getElementById('departamento');
+            
+            // Obtener el texto de la opción seleccionada
+            const textoSeleccionado = select.options[select.selectedIndex].text;
+
+            // Obtener el elemento <h2> donde se mostrará el texto
+            const resultado = document.getElementById('textoSeleccionado');
+            
+            resultado.textContent = `${textoSeleccionado}`;
+
+        }
+    </script>
+</body>
+</html>
