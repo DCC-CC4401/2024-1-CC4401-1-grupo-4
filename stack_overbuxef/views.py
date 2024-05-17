@@ -2,11 +2,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from .forms import ConsultaForm
+from .models import Consulta
 from .models import Usuario
+from django.core.paginator import Paginator
 # Create your views here.
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 
-
+@login_required(login_url='/')
 def publish_message(request):
     if request.method == "GET":
         form = ConsultaForm()
@@ -22,10 +25,25 @@ def publish_message(request):
         return "It was not valid"
     else:
         return "It was not a POST request"
-    
+
+@login_required(login_url='/')
 def forum(request):
-    if request.method == "GET":
-        return render(request, "forum.html")
+    query = request.GET.get('q')
+    if query:
+        consultas = Consulta.objects.filter(titulo__icontains=query)
+    else:
+        consultas = Consulta.objects.all()
+    
+    paginator = Paginator(consultas, 10)  # Muestra 10 consultas por página
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'query': query,
+    }
+    return render(request, 'forum.html', context)
 
 
 def register_user(request):
