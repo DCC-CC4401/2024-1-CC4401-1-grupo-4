@@ -35,7 +35,14 @@
                 <p>{{ consulta.mensaje }}</p>
             </div>
             <div>
-                <p>{{ consulta.votar }} <i class="fa fa-arrow-circle-up"></i></p>
+                <p>
+                    {% if consulta.votar >= 0 %}
+                        <i class="fa fa-thumbs-up"></i>
+                    {% else %}
+                        <i class="fa fa-thumbs-down"></i>
+                    {% endif %}
+                    {{ consulta.votar }}
+                </p>
             </div>
             <div>
                 <small>Publicada el {{ consulta.fecha_creacion }}</small>
