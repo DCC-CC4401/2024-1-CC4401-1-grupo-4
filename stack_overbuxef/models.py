@@ -8,8 +8,6 @@ from django.core.files.storage import FileSystemStorage
 fsPhotos = FileSystemStorage(location="/media/Fotos_usuarios")
 fsMedia = FileSystemStorage(location="/media/Multimedia")
 
-options = [[0, "No anónimo"], [1, "Anónimo"]]
-
 class Tag(models.Model):
     nombre=models.CharField(max_length=50)
     def __str__(self):

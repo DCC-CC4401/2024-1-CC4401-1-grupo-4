@@ -15,13 +15,10 @@ def publish_message(request):
         form = ConsultaForm(request.POST)
         if form.is_valid():
             consulta = form.save(commit= False)
-            consulta.creador_id = 1
-            consulta.tag_id = 1
+            consulta.creador_id = request.user.id
             consulta.save()
             return redirect('forum')
-        return "It was not valid"
-    else:
-        return "It was not a POST request"
+        return render(request, 'stack_overbuxef/publish.html', {'form': form})
     
 def forum(request):
     if request.method == "GET":
