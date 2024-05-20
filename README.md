@@ -23,6 +23,8 @@ pip install -r requirements.txt
 
 Teniendo los paquetes instalados finalmente es posible visualizar la página ejecutando el archivo `manage.py` de la siguiente forma:
 ```sh
+python .\manage.py makemigrations stack_overbuxef
+python .\manage.py migrate
 python .\manage.py runserver
 ```
 
