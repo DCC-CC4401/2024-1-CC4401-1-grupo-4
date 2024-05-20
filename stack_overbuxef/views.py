@@ -28,22 +28,22 @@ def publish_message(request):
 
 @login_required(login_url='/')
 def forum(request):
-    query = request.GET.get('q')
-    if query:
-        consultas = Consulta.objects.filter(titulo__icontains=query)
-    else:
-        consultas = Consulta.objects.all()
+    query = request.GET.get('q', '') # Devuelve el término ingresado en el input de "Busqué una pregunta"
+    if query: # Si hay algo ingresado en el buscador
+        consultas = Consulta.objects.filter(titulo__icontains=query) # Filtra las consultas por el título de estas
+    else: # Si no
+        consultas = Consulta.objects.all() # Se devuelven todas las consultas
     
     paginator = Paginator(consultas, 10)  # Muestra 10 consultas por página
 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_number = request.GET.get('page') # Obtengo el número de la página que se esta mostrando
+    page_obj = paginator.get_page(page_number) # Obtengo el objeto página
 
-    context = {
-        'page_obj': page_obj,
-        'query': query,
+    context = { # Se crea un diccionario el cual se le va entregar al html para obtener las referencias necesarias
+        'page_obj': page_obj, # Objeto página
+        'query': query, # Lo ingresado en el campo de la búsqueda. Esto es necesario para mantenerlo al cambiar de página
     }
-    return render(request, 'forum.html', context)
+    return render(request, 'forum.html', context) # Se muestra el template cuyo contexto es context
 
 
 def register_user(request):
