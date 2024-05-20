@@ -38,6 +38,12 @@
             <input type="file" id="foto" name="foto" accept="image/*">
         </div>
 
+        {% if error %}
+        <div>
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+
         <button type="submit">Crear usuario</button>
     </form>
 </body>

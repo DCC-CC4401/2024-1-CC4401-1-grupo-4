@@ -44,35 +44,39 @@ def forum(request):
 
 
 def register_user(request):
-    if request.method == 'GET': #Si estamos cargando la página
-        return render(request, "register_user.html") #Mostrar el template
+    if request.method == 'GET':
+        return render(request, "register_user.html")
 
-    elif request.method == 'POST': #Si estamos recibiendo el form de registro
-
-        #Tomar los elementos del formulario que vienen en request.POST
+    elif request.method == 'POST':
+        # Obtener los elementos del formulario
         nombre = request.POST['nombre']
         contrasenha = request.POST['contraseña']
         tipo = request.POST['tipo_usuario']
         mail = request.POST['mail']
         foto = request.POST['foto']
 
-        #Crear el nuevo usuario
-        user = Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=foto)
+        # Verificamos que el username ni el email estén ocupados para crear a un nuevo usuario
+        if Usuario.objects.filter(username=nombre).exists():
+            return render(request, "register_user.html", {"error": f"Nombre {nombre} ya está en uso"})
+        elif Usuario.objects.filter(email=mail).exists():
+            return render(request, "register_user.html", {"error": f"Email {mail} ya está en uso"})
+        else:
+            Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=foto)
 
-        #Redireccionar la página de /login
+        # Redireccionar a la página de /login
         return HttpResponseRedirect('/')
 
 def login_user(request):
     if request.method == 'GET':
         return render(request, "login.html")
-    if request.method == 'POST':
+
+    elif request.method == 'POST':
         username = request.POST['username']
         contrasenha = request.POST['contraseña']
+
+        # Autentificar al usuario
         usuario = authenticate(username=username, password=contrasenha)
         if usuario is not None:
             login(request, usuario)
-            # Por mientras va directamente a message, debe ser cambiado a '/forum' cuando este implementado
             return HttpResponseRedirect('/forum') 
-        else:
-            return HttpResponseRedirect('/register')
-        
+        return HttpResponseRedirect('/register')
