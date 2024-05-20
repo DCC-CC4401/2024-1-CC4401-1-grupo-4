@@ -12,19 +12,16 @@ from django.contrib.auth.decorators import login_required
 @login_required(login_url='/')
 def publish_message(request):
     if request.method == "GET":
-        form = ConsultaForm()
+        form = ConsultaForm()  #Si la request es de tipo GET se crea un formulario vacío y se renderiza
         return render(request, 'stack_overbuxef/publish.html', {'form': form})
     if request.method == "POST":
-        form = ConsultaForm(request.POST)
+        form = ConsultaForm(request.POST) #Si la request es de tipo POST se crea un formulario con los datos recibidos
         if form.is_valid():
             consulta = form.save(commit= False)
-            consulta.creador_id = 1
-            consulta.tag_id = 1
-            consulta.save()
+            consulta.creador_id = request.user.id  #Se asigna el creador de la consulta como el usuario que está logueado
+            consulta.save() #Se guarda la consulta en la base de datos
             return redirect('forum')
-        return "It was not valid"
-    else:
-        return "It was not a POST request"
+        return render(request, 'stack_overbuxef/publish.html', {'form': form}) # Si el formulario no es válido se renderiza nuevamente el formulario con los errores
 
 @login_required(login_url='/')
 def forum(request):
@@ -75,7 +72,7 @@ def login_user(request):
         if usuario is not None:
             login(request, usuario)
             # Por mientras va directamente a message, debe ser cambiado a '/forum' cuando este implementado
-            return HttpResponseRedirect('/message') 
+            return HttpResponseRedirect('/forum') 
         else:
             return HttpResponseRedirect('/register')
         
