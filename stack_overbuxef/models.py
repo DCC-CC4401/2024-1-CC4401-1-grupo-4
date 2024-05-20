@@ -50,7 +50,8 @@ class Consulta(models.Model):
     mensaje=models.TextField(blank=False,null=False)
     creador=models.ForeignKey(Usuario, blank=False, null=False,on_delete=models.CASCADE)
     anonimo=models.BooleanField(null=False,default=0)
-    multimedia = models.FileField(storage=fsMedia, blank=True, null=True) 
+    multimedia = models.FileField(storage=fsMedia, blank=True, null=True)
+    votar=models.IntegerField(default=0) 
 
 #Esta clase se usara para crear la tabla Respuesta que tendra todas las respuestas asociadas a alguna consulta.
 class Respuesta(models.Model):
