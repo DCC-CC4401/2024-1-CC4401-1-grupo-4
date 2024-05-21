@@ -46,7 +46,7 @@ class Usuario(AbstractUser):
 #Esta clase se usara para crear la tabla consulta que tendra todas las consultas que haga un usuario en el foro.
 class Consulta(models.Model):
     titulo=models.CharField(blank=False, null=False,max_length=100)
-    fecha_creacion=models.DateTimeField(default=timezone.now().strftime("%Y-%m-%d"))
+    fecha_creacion=models.DateTimeField(default=timezone.now())
     mensaje=models.TextField(blank=False,null=False)
     creador=models.ForeignKey(Usuario, blank=False, null=False,on_delete=models.CASCADE)
     anonimo=models.BooleanField(null=False,default=0)
