@@ -1,0 +1,23 @@
+[
+    {
+        "model": "stack_overbuxef.tag",
+        "pk": 1,
+        "fields": {
+            "nombre": "CC1000"
+        }
+    },
+    {
+        "model": "stack_overbuxef.tag",
+        "pk": 2,
+        "fields": {
+            "nombre": "CC1001"
+        }
+    },
+    {
+        "model": "stack_overbuxef.tag",
+        "pk": 3,
+        "fields": {
+            "nombre": "CC3001"
+        }
+    }
+]
