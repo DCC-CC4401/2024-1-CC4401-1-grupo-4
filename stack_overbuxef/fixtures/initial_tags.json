@@ -19,5 +19,26 @@
         "fields": {
             "nombre": "CC3001"
         }
+    },
+    {
+        "model": "stack_overbuxef.tag",
+        "pk": 4,
+        "fields": {
+            "nombre": "DIM"
+        }
+    },
+    {
+        "model": "stack_overbuxef.tag",
+        "pk": 5,
+        "fields": {
+            "nombre": "DCC"
+        }
+    },
+    {
+        "model": "stack_overbuxef.tag",
+        "pk": 6,
+        "fields": {
+            "nombre": "MA1001"
+        }
     }
 ]

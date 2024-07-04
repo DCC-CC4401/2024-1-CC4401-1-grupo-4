@@ -23,11 +23,9 @@ def publish_message(request):
             consulta.creador_id = request.user.id  #Se asigna el creador de la consulta como el usuario que está logueado
             consulta.save() #Se guarda la consulta en la base de datos
 
-                        # Obtener el ID del tag seleccionado (si existe)
-            tag_id = form.cleaned_data.get('tag')
-            if tag_id:
-                tag = Tag.objects.get(id=tag_id)
-                # Crear la relación consulta_tag
+            # Guardar los tags seleccionados en la tabla de relación Consulta_tag
+            tags = form.cleaned_data.get('tag')
+            for tag in tags:
                 Consulta_tag.objects.create(consulta=consulta, tag=tag)
             return redirect('forum')
         return render(request, 'stack_overbuxef/publish.html', {'form': form}) # Si el formulario no es válido se renderiza nuevamente el formulario con los errores
