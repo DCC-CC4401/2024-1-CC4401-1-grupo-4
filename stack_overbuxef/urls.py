@@ -9,4 +9,6 @@ urlpatterns = [
     path('forum',views.forum, name='forum'),
     path('message',views.publish_message, name='message'),
     path("admin/", admin.site.urls),
+    path("consults/<int:consult_id>/",views.modalAnswers, name='answers'),
+    path("makeAnswer/<int:consult_id>/",views.makeModalAnswer,name='makeAnswer'),
 ]
