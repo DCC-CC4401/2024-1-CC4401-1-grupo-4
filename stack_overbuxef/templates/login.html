@@ -7,13 +7,15 @@
 </head>
 <body>
     {% load static %}
-    <nav class="navbar shadow" style="background-color: #ed7d7d;">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="{% static 'stack_overbuxef/images/stack_overbuxef_logo_1.png' %}" alt="Bootstrap" width="30" height="24">
+    <nav class="navbar shadow" style="background-color: #dc3545;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="{% static 'images/stackoverbuxef_logo.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                <span style="color: white; font-weight: bold;">Stack Overbuxef</span>
             </a>
         </div>
     </nav>
+
     <div class="container d-flex justify-content-center align-items-start min-vh-100 pt-5">
         <div class="panel-body col-md-6 p-4 shadow border rounded bg-light">
             <h1 class="text-center mb-4">Iniciar sesión</h1>
@@ -27,6 +29,7 @@
                     </span>
                     <input type="text" id="nombre_usuario" name="username" class="form-control shadow" required placeholder="Usuario">
                 </div>
+
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
@@ -35,11 +38,13 @@
                     </span>
                     <input type="password" id="contraseña" name="contraseña" class="form-control shadow" required placeholder="Contraseña">
                 </div>
+
                 <div class="d-flex flex-column align-items-center">
                     <button type="submit" class="btn btn-danger shadow mb-2" style="width: 50%;">Entrar</button>
                     <hr style="width: 100%;">
                     <button type="button" class="btn btn-danger shadow mt-2" id="registro" name="registro" style="width: 50%;" onclick="location.href = '/register'">Registrarse</button>
                 </div>
+
             </form>
         </div>
     </div>
