@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>Forum</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
     <header>
@@ -48,13 +52,12 @@
                 <small>Publicada el {{ consulta.fecha_creacion }}</small>
             </div>
             <div>
-                <button><i class="fa fa-sort-desc"></i> Respuestas</button>
-                <button><i class="fa fa-reply"></i> Responder</button>
+                <button class="consult-link" data-id="{{consulta.id }}" data-toggle="modal" data-target="#answerModal"><i class="fa fa-comments"></i> Respuestas</button>
+                <button class="answer-consult" data-id="{{consulta.id}}" data-toggle="modal" data-target="#makeAnswerModal"><i class="fa fa-reply"></i> Responder</button>
             </div>
         </div>
         <hr>
         {% endfor %}
-
         <div class="pagination">
             <span class="step-links">
                 {% if page_obj.has_previous %}
@@ -73,6 +76,63 @@
             </span>
         </div>
     </div>
+    <!--modal-->
+    <div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="answerModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="answerModalLabel">Respuestas</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal para responder -->
+    <div class="modal fade" id="makeAnswerModal" tabindex="-1" role="dialog" aria-labelledby="makeAnswerModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="makeAnswerModalLabel">Escribe tu respuesta</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body1">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    $(document).ready(function(){
+        // Modal para respuestas
+        $('.consult-link').click(function(){
+            var consultId = $(this).data('id');
+            $.ajax({
+                url: '/consults/' + consultId + '/',
+                success: function(data) {
+                    $('#modal-body').html(data);
+                    $('#answerModal').modal('show'); // Mostrar el modal después de cargar los datos
+                }
+            });
+        });
+    
+        // Modal para respondeR
+        $('.answer-consult').click(function(){
+            var consultId = $(this).data('id');
+            $.ajax({
+                url: '/makeAnswer/' + consultId + '/',
+                success: function(data) {
+                    $('#modal-body1').html(data);
+                    $('#makeAnswerModal').modal('show'); // Mostrar el modal después de cargar los datos
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>
 
