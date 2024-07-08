@@ -8,9 +8,10 @@
 <body>
     {% load static %}
     <nav class="navbar shadow" style="background-color: #ed7d7d;">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="{% static 'stack_overbuxef/images/stack_overbuxef_logo_1.png' %}" alt="Bootstrap" width="30" height="24">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="{% static 'stack_overbuxef/images/stackoverbuxef_logo.png' %}" alt="Bootstrap" width="30" height="30" class="d-inline-block align-text-top">
+                <span style="color: white; font-weight: bold;">Stack Overbuxef</span>
             </a>
         </div>
     </nav>
@@ -37,8 +38,7 @@
                     <input type="password" id="contraseña" name="contraseña" class="form-control shadow" required placeholder="Contraseña">
                 </div>
                 
-                <div>
-                    <label for="tipo_usuario">Tipo de usuario</label>
+                <div class="input-group mb-3">
                     <select id="tipo_usuario" class="form-control" name="tipo_usuario" required>
                         <option class="disabled" vale="">Elige un tipo de usuario</option>
                         <option value="ES">Estudiante</option>
@@ -56,9 +56,9 @@
                     <input type="email" id="mail" name="mail" class="form-control shadow" required placeholder="usuario@mail.com">
                 </div>
 
-                <div>
-                    <label for="foto">Foto de perfil</label>
-                    <input type="file" id="foto" name="foto" accept="image/*">
+                <div class="mb-3">
+                    <label for="foto" class="form-label">Foto de peril</label>
+                    <input type="file" id="foto" name="foto" class="form-control" accept="image/*">
                 </div>
 
                 {% if error %}
@@ -67,7 +67,10 @@
                 </div>
                 {% endif %}
 
-                <button type="submit">Crear usuario</button>
+                <div class="d-flex flex-column align-items-center">
+                    <button type="submit" class="btn btn-danger shadow mb-2" style="width: 50%;">Crear usuario</button>
+                </div>
+
         </div>
     </div>
     </form>
