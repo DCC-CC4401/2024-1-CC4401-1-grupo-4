@@ -1,15 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
-from .forms import ConsultaForm
-from .models import Consulta
-from .models import Usuario
-from .models import Tag
-from .models import Consulta_tag
+from .forms import ConsultaForm, AnswerForm
+from .models import Consulta,Usuario, Consulta_respuesta,Respuesta
 from django.core.paginator import Paginator
-# Create your views here.
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+
 
 @login_required(login_url='/')
 def publish_message(request):
@@ -87,3 +85,31 @@ def login_user(request):
             login(request, usuario)
             return HttpResponseRedirect('/forum') 
         return HttpResponseRedirect('/register')
+
+def modalAnswers(request,consult_id):
+    consult=get_object_or_404(Consulta, id=consult_id)
+    answers=Respuesta.objects.filter(consulta=consult).order_by('votar')
+    paginator = Paginator(answers, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'answers.html', {'page_obj':page_obj,'consult':consult})
+
+@login_required(login_url='/')
+def makeModalAnswer(request,consult_id):
+    if request.method=='GET':
+        print("hola")
+        form=AnswerForm
+        return render(request, 'publishAnswer.html', {'form': form, 'consult_id': consult_id})
+    elif request.method=='POST':
+        print("chao")
+        form=AnswerForm(request.POST)
+        if form.is_valid():
+            respuesta = form.save(commit=False)
+            respuesta.creador = request.user  # Asignar el usuario logueado
+            respuesta.consulta = get_object_or_404(Consulta, id=consult_id)  # Obtener la consulta correspondiente
+            respuesta.save()
+            return redirect('forum')
+        else:
+            # Manejar el caso donde el formulario no es válido
+            # Puedes renderizar nuevamente el formulario con errores si es necesario
+            return render(request, 'publishAnswer.html', {'form': form, 'consult_id': consult_id})
