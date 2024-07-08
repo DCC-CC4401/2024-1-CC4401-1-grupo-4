@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'stack_overbuxef',
+    'django_select2',
 ]
 
 MIDDLEWARE = [
