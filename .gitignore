@@ -130,3 +130,7 @@ dmypy.json
 
 # Ignore migrations
 stack_overbuxef/migrations
+
+# venv
+proyecto/
+proyectoIngSoft/
