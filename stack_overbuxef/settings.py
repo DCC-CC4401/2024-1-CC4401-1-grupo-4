@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'stack_overbuxef',
     'django_select2',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +139,26 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 #STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 AUTH_USER_MODEL = 'stack_overbuxef.Usuario'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_IMAGE_BACKEND = "pillow"
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', 'RemoveFormat']},
+            {'name': 'paragraph', 'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote']},
+            {'name': 'insert', 'items': ['Mathjax', 'Table', 'HorizontalRule', 'SpecialChar']},
+            {'name': 'styles', 'items': ['Format', 'Font', 'FontSize']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'links', 'items': ['Link', 'Unlink']}
+        ],
+        'mathJaxLib': '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML',
+        'extraPlugins': 'mathjax',
+        'removePlugins': 'cloudservices,exportpdf,uploadimage',
+    },
+}   

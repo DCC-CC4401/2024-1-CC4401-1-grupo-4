@@ -17,7 +17,7 @@ def publish_message(request):
         form = ConsultaForm()  #Si la request es de tipo GET se crea un formulario vacío y se renderiza
         return render(request, 'stack_overbuxef/publish.html', {'form': form})
     if request.method == "POST":
-        form = ConsultaForm(request.POST) #Si la request es de tipo POST se crea un formulario con los datos recibidos
+        form = ConsultaForm(request.POST, request.FILES) #Si la request es de tipo POST se crea un formulario con los datos recibidos
         if form.is_valid():
             consulta = form.save(commit= False)
             consulta.creador_id = request.user.id  #Se asigna el creador de la consulta como el usuario que está logueado

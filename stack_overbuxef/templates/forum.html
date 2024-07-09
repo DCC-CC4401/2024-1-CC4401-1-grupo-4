@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <title>Forum</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                processEscapes: true
+            }
+        });
+    </script>
 </head>
 <body>
     <header>
@@ -32,7 +41,7 @@
             </div>
             <div>
                 <h4><a>{{ consulta.titulo }}</a></h4>
-                <p>{{ consulta.mensaje }}</p>
+                <p>{{ consulta.mensaje|safe }}</p>
             </div>
             <div>
                 <p>

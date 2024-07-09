@@ -3,7 +3,8 @@ from django.db import models
 # Create your models here.
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import FileSystemStorage 
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 #En las variables fsPhotos y fsMedia tiene las diracciones de los archivos donde se guardaran las fotos y otro tipo de
@@ -47,7 +48,7 @@ class Usuario(AbstractUser):
 class Consulta(models.Model):
     titulo=models.CharField(blank=False, null=False,max_length=100)
     fecha_creacion=models.DateTimeField(default=timezone.now)
-    mensaje=models.TextField(blank=False,null=False)
+    mensaje = RichTextUploadingField('mensaje')
     creador=models.ForeignKey(Usuario, blank=False, null=False,on_delete=models.CASCADE)
     anonimo=models.BooleanField(null=False,default=0)
     multimedia = models.FileField(storage=fsMedia, blank=True, null=True)
