@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from .forms import ConsultaForm
@@ -27,7 +28,7 @@ def forum(request):
         consultas = Consulta.objects.filter(titulo__icontains=query) # Filtra las consultas por el título de estas
     else: # Si no
         consultas = Consulta.objects.all() # Se devuelven todas las consultas
-    
+
     paginator = Paginator(consultas, 10)  # Muestra 10 consultas por página
 
     page_number = request.GET.get('page') # Obtengo el número de la página que se esta mostrando
@@ -49,7 +50,6 @@ def register_user(request):
         contrasenha = request.POST['contraseña']
         tipo = request.POST['tipo_usuario']
         mail = request.POST['mail']
-        foto = request.POST['foto']
 
         # Verificamos que el username ni el email estén ocupados para crear a un nuevo usuario
         if Usuario.objects.filter(username=nombre).exists():
@@ -57,7 +57,9 @@ def register_user(request):
         elif Usuario.objects.filter(email=mail).exists():
             return render(request, "register_user.html", {"error": f"Email {mail} ya está en uso"})
         else:
-            Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=foto)
+            foto = request.FILES.get('foto')
+            file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
+            Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=rf"media/{file_name}")
 
         # Redireccionar a la página de /login
         return HttpResponseRedirect('/')
@@ -80,4 +82,7 @@ def login_user(request):
 @login_required
 def profile(request):
     if request.method == 'GET':
-        return render(request, "profile.html")
+        usuario = request.user
+        print(usuario.foto.url)
+        profile = {"nombre": usuario.username, "rol": usuario.tipo, "correo": usuario.email, "foto": usuario.foto}
+        return render(request, "profile.html", profile)

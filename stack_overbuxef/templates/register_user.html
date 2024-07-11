@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1> Registro </h1>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div>
             <label for="nombre_usuario">Nombre</label>
@@ -44,7 +44,7 @@
         </div>
         {% endif %}
 
-        <button type="submit">Crear usuario</button>
+        <input type="submit" value="Crear usuario">
     </form>
 </body>
 </html>
