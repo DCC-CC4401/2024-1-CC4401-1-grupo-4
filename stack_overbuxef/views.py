@@ -1,13 +1,10 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from .forms import ConsultaForm
-from .models import Consulta
-from .models import Usuario
-from django.core.paginator import Paginator
-# Create your views here.
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
+from .models import Consulta, Usuario
 
 @login_required(login_url='/')
 def publish_message(request):
@@ -41,7 +38,6 @@ def forum(request):
         'query': query, # Lo ingresado en el campo de la búsqueda. Esto es necesario para mantenerlo al cambiar de página
     }
     return render(request, 'forum.html', context) # Se muestra el template cuyo contexto es context
-
 
 def register_user(request):
     if request.method == 'GET':
@@ -80,3 +76,8 @@ def login_user(request):
             login(request, usuario)
             return HttpResponseRedirect('/forum') 
         return HttpResponseRedirect('/register')
+
+@login_required
+def profile(request):
+    if request.method == 'GET':
+        return render(request, "profile.html")

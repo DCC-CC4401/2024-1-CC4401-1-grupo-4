@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Perfil</title>
+</head>
+<body>
+	<div>
+		<div>
+			<img src="{{ profile.picture }}" alt="profile picture">
+			<p>- {{ profile.name }}</p>
+			<p>- {{ profile.rol }}</p>
+			<p>- {{ profile.email }}</p>
+		</div>
+		<div>
+			<h2>Editar información personal:</h2>
+			<form action="PUT">
+				<label for="name">Nombre:</label><br>
+				<input type="text"><br><br>
+
+				<label for="rol">Rol:</label><br>
+				<select name="rol" id="rol">
+					<option class="disabled" vale="">Elige un tipo de usuario</option>
+					<option value="ES">Estudiante</option>
+					<option value="AU">Auxiliar</option>
+					<option value="PR">Profesor</option>
+				</select><br><br>
+
+				<label for="email">Correo:</label><br>
+				<input type="text"><br><br>
+
+				<label for="image">Foto de perfil:</label><br>
+				<input type="file" name="iamge" id="image"><br><br>
+
+				<input type="submit" name="update" id="update" value="ACTUALIZAR INFORMACIÓN">
+			</form>
+		</div>
+	</div>
+</body>
+</html>
