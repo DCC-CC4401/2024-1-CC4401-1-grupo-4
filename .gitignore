@@ -128,5 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Ignore migrations
+# Ignore specifics
 stack_overbuxef/migrations
+stack_overbuxef/media
