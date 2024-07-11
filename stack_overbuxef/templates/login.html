@@ -11,11 +11,11 @@
             {% csrf_token %}
             <div>
                 <label for="nombre_usuario">Nombre</label>
-                <input type="text" id=nombre_usuario name="username" required>
+                <input type="text" id=nombre_usuario name="username" placeholder="Ingrese su nombre de usuario" required>
             </div>
             <div>
                 <label for="contraseña">Contraseña</label>
-                <input type="password" id="contraseña" name="contraseña" required>
+                <input type="password" id="contraseña" name="contraseña" placeholder="Ingrese su contraseña" required>
             </div>
             <button type="submit">Entrar</button><br>
             <button type="button" id="registro" name="registro" onclick="location.href = '/register'">Registrarse</button>

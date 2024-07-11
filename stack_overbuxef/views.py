@@ -81,11 +81,14 @@ def login_user(request):
 
 @login_required
 def profile(request):
+	# Diccionario para renderizar adecuadamente el tipo de cuenta en la página
 	tipos = {"AU": "Auxiliar", "ES": "Estudiante", "PR": "Profesor"}
+
 	if request.method == 'GET':
 		return render(request, "profile.html", {"tipos": tipos, "error": ""})
 
 	elif request.method == 'POST':
+		# Nueva información del usuario
 		nombre = request.POST.get('nombre')
 		tipo = request.POST.get('tipo')
 		correo = request.POST.get('correo')
@@ -94,6 +97,7 @@ def profile(request):
 		curr_username = request.user.username
 		user = Usuario.objects.get(username=curr_username)
 
+		# Verificar que la nueva información de usuario no coincida con algún registro existente
 		if nombre:
 			if Usuario.objects.filter(username=nombre).exists():
 				return render(request, "profile.html", {"tipos": tipos, "error": f"Nombre {nombre} ya está en uso"})
@@ -106,7 +110,8 @@ def profile(request):
 			elif request.user.email == correo:
 				return render(request, "profile.html", {"tipos": tipos, "error": f"Elige un correo distinto al actual"})
 			user.email = correo
-		if tipo: user.tipo = tipo
+		if tipo:
+			user.tipo = tipo
 		if foto:
 			file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
 			user.foto = rf"media/{file_name}"

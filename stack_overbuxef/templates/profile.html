@@ -9,27 +9,27 @@
 	<div>
 		<div>
 			<img src="{{ request.user.foto }}" alt="profile picture">
-			<p>- {{ request.user.username }}</p>
-			<p>- {% for key, value in tipos.items %} {% if key == request.user.tipo %} {{value}} {% endif %} {% endfor %}</p>
-			<p>- {{ request.user.email }}</p>
+			<p><b>Nombre:</b> {{ request.user.username }}</p>
+			<p><b>Tipo de cuenta:</b> {% for key, value in tipos.items %} {% if key == request.user.tipo %} {{value}} {% endif %} {% endfor %}</p>
+			<p><b>Correo:</b> {{ request.user.email }}</p>
 		</div>
 		<div>
 			<h2>Editar información personal:</h2>
 			<form method="post" enctype="multipart/form-data">
 				{% csrf_token %}
 				<label for="nombre">Nombre:</label><br>
-				<input type="text" name="nombre"><br><br>
+				<input type="text" name="nombre" placeholder="Ingrese su nuevo nombre de usuario"><br><br>
 
 				<label for="rol">Rol:</label><br>
 				<select name="tipo" id="tipo">
-					<option class="disabled" value="">Elige un tipo de usuario</option>
+					<option class="disabled" value="">Elija su nuevo tipo de usuario</option>
 					<option value="ES">Estudiante</option>
 					<option value="AU">Auxiliar</option>
 					<option value="PR">Profesor</option>
 				</select><br><br>
 
 				<label for="correo">Correo:</label><br>
-				<input type="text" name="correo"><br><br>
+				<input type="text" name="correo" placeholder="Ingrese su nuevo correo electrónico"><br><br>
 
 				<label for="foto">Foto de perfil:</label><br>
 				<input type="file" name="foto" id="foto"><br><br>
