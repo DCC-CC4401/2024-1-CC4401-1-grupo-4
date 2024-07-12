@@ -91,6 +91,9 @@ def login_user(request):
 			return HttpResponseRedirect('/forum') 
 		return HttpResponseRedirect('/register')
 
+def logout_user(request):
+    logout(request)
+    return HttpResponseRedirect('/')
 
 @login_required
 def profile(request):
@@ -132,7 +135,7 @@ def profile(request):
 
 		return HttpResponseRedirect('/forum') 
 
-  
+
 def modalAnswers(request,consult_id):
 	consult = get_object_or_404(Consulta, id=consult_id)
 	answers = Respuesta.objects.filter(consulta=consult).order_by('votar')
