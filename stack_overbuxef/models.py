@@ -37,7 +37,7 @@ class Usuario(AbstractUser):
     options = [
         ("ES", "Estudiante"),
         ("AU", "Auxiliar"),
-        ("PR", "Profesor"),
+        ("AD", "Administrador"),
     ]
     tipo = models.CharField(choices=options, max_length=2)
     foto = models.ImageField(upload_to=fsPhotos, blank=True)

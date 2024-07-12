@@ -82,7 +82,7 @@ def login_user(request):
 @login_required
 def profile(request):
 	# Diccionario para renderizar adecuadamente el tipo de cuenta en la página
-	tipos = {"AU": "Auxiliar", "ES": "Estudiante", "PR": "Profesor"}
+	tipos = {"AU": "Auxiliar", "ES": "Estudiante", "AD": "Administrador"}
 
 	if request.method == 'GET':
 		return render(request, "profile.html", {"tipos": tipos, "error": ""})
