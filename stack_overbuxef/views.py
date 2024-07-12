@@ -69,8 +69,9 @@ def register_user(request):
 			return render(request, "register_user.html", {"error": f"Email {mail} ya está en uso"})
 		else:
 			foto = request.FILES.get('foto')
-			file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
-			Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=rf"media/{file_name}")
+			if foto:
+				file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
+			Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=rf"media/{file_name}" if foto else None)
 
 		# Redireccionar a la página de /login
 		return HttpResponseRedirect('/')
