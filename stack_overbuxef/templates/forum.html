@@ -22,6 +22,7 @@
     <header>
         <div>
             <h1>Stack Overbuxef</h1>
+			<a href="profile">perfil</a><br>
 			{% if request.user.tipo == 'AD' %}
 			<a href="{% url 'tags' %}">Crear tags</a>
 			{% endif %}

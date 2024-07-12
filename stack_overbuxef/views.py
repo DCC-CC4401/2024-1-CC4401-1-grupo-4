@@ -1,5 +1,9 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
+from django.core.files.storage import default_storage
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from .forms import ConsultaForm, AnswerForm
 from .models import Consulta, Usuario, Tag, Consulta_tag, Consulta_respuesta, Respuesta
@@ -35,7 +39,7 @@ def forum(request):
 		consultas = Consulta.objects.filter(titulo__icontains=query) # Filtra las consultas por el título de estas
 	else: # Si no
 		consultas = Consulta.objects.all() # Se devuelven todas las consultas
-	
+
 	paginator = Paginator(consultas, 10)  # Muestra 10 consultas por página
 
 	page_number = request.GET.get('page') # Obtengo el número de la página que se esta mostrando
@@ -47,7 +51,6 @@ def forum(request):
 	}
 	return render(request, 'forum.html', context) # Se muestra el template cuyo contexto es context
 
-
 def register_user(request):
 	if request.method == 'GET':
 		return render(request, "register_user.html")
@@ -58,7 +61,6 @@ def register_user(request):
 		contrasenha = request.POST['contraseña']
 		tipo = request.POST['tipo_usuario']
 		mail = request.POST['mail']
-		foto = request.POST['foto']
 
 		# Verificamos que el username ni el email estén ocupados para crear a un nuevo usuario
 		if Usuario.objects.filter(username=nombre).exists():
@@ -66,7 +68,9 @@ def register_user(request):
 		elif Usuario.objects.filter(email=mail).exists():
 			return render(request, "register_user.html", {"error": f"Email {mail} ya está en uso"})
 		else:
-			Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=foto)
+			foto = request.FILES.get('foto')
+			file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
+			Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=rf"media/{file_name}")
 
 		# Redireccionar a la página de /login
 		return HttpResponseRedirect('/')
@@ -86,6 +90,48 @@ def login_user(request):
 			return HttpResponseRedirect('/forum') 
 		return HttpResponseRedirect('/register')
 
+
+@login_required
+def profile(request):
+	# Diccionario para renderizar adecuadamente el tipo de cuenta en la página
+	tipos = {"PR": "Profesor", "ES": "Estudiante", "AD": "Administrador"}
+
+	if request.method == 'GET':
+		return render(request, "profile.html", {"tipos": tipos, "error": ""})
+
+	elif request.method == 'POST':
+		# Nueva información del usuario
+		nombre = request.POST.get('nombre')
+		tipo = request.POST.get('tipo')
+		correo = request.POST.get('correo')
+		foto = request.FILES.get('foto')
+
+		curr_username = request.user.username
+		user = Usuario.objects.get(username=curr_username)
+
+		# Verificar que la nueva información de usuario no coincida con algún registro existente
+		if nombre:
+			if Usuario.objects.filter(username=nombre).exists():
+				return render(request, "profile.html", {"tipos": tipos, "error": f"Nombre {nombre} ya está en uso"})
+			elif curr_username == nombre:
+				return render(request, "profile.html", {"tipos": tipos, "error": f"Elige un nombre de usuario distinto al actual"})
+			user.username = nombre
+		if correo:
+			if Usuario.objects.filter(email=correo).exists():
+				return render(request, "profile.html", {"tipos": tipos, "error": f"Email {correo} ya está en uso"})
+			elif request.user.email == correo:
+				return render(request, "profile.html", {"tipos": tipos, "error": f"Elige un correo distinto al actual"})
+			user.email = correo
+		if tipo:
+			user.tipo = tipo
+		if foto:
+			file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
+			user.foto = rf"media/{file_name}"
+		user.save()
+
+		return HttpResponseRedirect('/forum') 
+
+  
 def modalAnswers(request,consult_id):
 	consult = get_object_or_404(Consulta, id=consult_id)
 	answers = Respuesta.objects.filter(consulta=consult).order_by('votar')

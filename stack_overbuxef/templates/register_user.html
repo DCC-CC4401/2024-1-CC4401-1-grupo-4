@@ -7,16 +7,16 @@
 </head>
 <body>
     <h1> Registro </h1>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div>
             <label for="nombre_usuario">Nombre</label>
-            <input type="text" id="nombre_usuario" name="nombre" required>
+            <input type="text" id="nombre_usuario" name="nombre" placeholder="Ingrese su nombre de usuario" required>
         </div>
         
         <div>
             <label for="contraseña">Contraseña</label>
-            <input type="password" id="contraseña" name="contraseña" required>
+            <input type="password" id="contraseña" name="contraseña" placeholder="Ingrese su contraseña" required>
         </div>
         
         <div>
@@ -91,7 +91,6 @@
                 <div class="d-flex flex-column align-items-center">
                     <button type="submit" class="btn btn-danger shadow mb-2" style="width: 50%;">Crear usuario</button>
                 </div>
-
         </div>
     </div>
     </form>
