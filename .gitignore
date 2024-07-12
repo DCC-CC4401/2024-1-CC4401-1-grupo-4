@@ -132,3 +132,4 @@ dmypy.json
 # Ignore specifics
 stack_overbuxef/migrations
 stack_overbuxef/media
+media/
