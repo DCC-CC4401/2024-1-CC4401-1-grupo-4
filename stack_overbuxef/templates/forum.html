@@ -30,11 +30,57 @@
             <form method="get" action="">
                 <input type="text" name="q" placeholder="Busque una pregunta" value="{{ query|default_if_none:'' }}">
                 <button type="submit"><i class="fa fa-search"></i></button>
+    {% load static %}
+    <nav class="navbar shadow" style="background-color: #ed7d7d;">
+        <div class="container-fluid">
+            <!-- Logo a la izquierda -->
+            <a class="navbar-brand" href="forum">
+                <img src="{% static 'stack_overbuxef/images/stackoverbuxef_logo.png' %}" alt="Bootstrap" width="30" height="30" class="d-inline-block align-text-top">
+                <span style="color: white; font-weight: bold;">Stack Overbuxef</span>
+            </a>
+    
+            <!-- Espaciador central para empujar los otros elementos a los extremos -->
+            <div class="d-flex flex-grow-1"></div>
+            
+            <!-- Botón del icono del usuario a la derecha -->
+            <button class="btn btn-outline-light d-flex align-items-center me-2" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ffffff" class="bi bi-person-circle" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                </svg>
+                <span style="color: white;">  Usuario</span>
+            </button>
+    
+            <!-- Botón de cerrar sesión más a la derecha -->
+            <form class="form-inline">
+                <button class="btn btn-outline-light" type="button">Cerrar sesión</button>
             </form>
-            <a href="{% url 'message' %}"><button>Publicar</button></a>
         </div>
-    </header>       
-    <div>
+    </nav>   
+    
+    <style>
+        .margins {
+            margin-left: 40px; /* Ajusta el valor según tus necesidades */
+            margin-right: 40px; /* Ajusta el valor según tus necesidades */
+        }
+    </style>
+    
+    <header class="margins">
+        <div>
+            <h1>Foro</h1>
+        </div>
+
+        <div>
+            <form method="get" action="" class="form-inline">
+                <input type="text" class="btn border shadow mb-2" style="width: 20%;" name="q" placeholder="Busque una pregunta" value="{{ query|default_if_none:'' }}">
+                <button type="submit" class="btn btn-danger shadow mb-2" style="width: 5%;"><i class="fa fa-search"></i></button>
+            </form>
+            <a href="{% url 'message' %}"><button class="btn btn-danger shadow mb-1">Publicar</button></a>
+        </div>
+    </header>   
+
+    
+    <div class="margins">
         <hr>
         {% for consulta in page_obj %}
         <div>
@@ -60,13 +106,13 @@
                     {{ consulta.votar }}
                 </p>
             </div>
-            <div>
+            <div style="display: flex; justify-content: flex-end">
                 <small>Publicada el {{ consulta.fecha_creacion }}</small>
             </div>
-            <div>
-                <button class="consult-link" data-id="{{ consulta.id }}" data-toggle="modal" data-target="#answerModal"><i class="fa fa-comments"></i> Respuestas</button>
-                <button class="answer-consult" data-id="{{ consulta.id }}" data-toggle="modal" data-target="#makeAnswerModal"><i class="fa fa-reply"></i> Responder</button>
-				{% if request.user.tipo == 'AD' %}
+            <div style="display: flex; justify-content: flex-end">
+                <button class="consult-link btn btn-danger shadow mb-2" data-id="{{ consulta.id }}" data-toggle="modal" data-target="#answerModal"><i class="fa fa-comments"></i> Respuestas</button>
+                <button class="answer-consult btn btn-danger shadow mb-2" data-id="{{ consulta.id }}" data-toggle="modal" data-target="#makeAnswerModal"><i class="fa fa-reply"></i> Responder</button>
+                {% if request.user.tipo == 'AD' %}
 					<button class="delete-comment" data-id="{{ consulta.id }}"><i class="fa fa-trash"></i> Borrar</button>
 				{% endif %}
             </div>
@@ -79,11 +125,11 @@
                     <a href="?q={{ query }}&page=1">&laquo; primera</a>
                     <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">anterior</a>
                 {% endif %}
-
+    
                 <span class="current">
                     Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
                 </span>
-
+    
                 {% if page_obj.has_next %}
                     <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">siguiente</a>
                     <a href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
