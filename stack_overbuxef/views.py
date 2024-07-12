@@ -1,25 +1,36 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
-from .forms import ConsultaForm
-from .models import Consulta, Usuario
+from .forms import ConsultaForm, AnswerForm
+from .models import Consulta, Usuario, Tag, Consulta_tag, Consulta_respuesta, Respuesta
+from django.core.paginator import Paginator
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+
 
 @login_required(login_url='/')
 def publish_message(request):
-	if request.method == "GET":
-		form = ConsultaForm()  #Si la request es de tipo GET se crea un formulario vacío y se renderiza
-		return render(request, 'stack_overbuxef/publish.html', {'form': form})
-	if request.method == "POST":
-		form = ConsultaForm(request.POST) #Si la request es de tipo POST se crea un formulario con los datos recibidos
-		if form.is_valid():
-			consulta = form.save(commit= False)
-			consulta.creador_id = request.user.id  #Se asigna el creador de la consulta como el usuario que está logueado
-			consulta.save() #Se guarda la consulta en la base de datos
-			return redirect('forum')
-		return render(request, 'stack_overbuxef/publish.html', {'form': form}) # Si el formulario no es válido se renderiza nuevamente el formulario con los errores
+    if request.method == "GET":
+        form = ConsultaForm()  #Si la request es de tipo GET se crea un formulario vacío y se renderiza
+        return render(request, 'stack_overbuxef/publish.html', {'form': form})
+    if request.method == "POST":
+        form = ConsultaForm(request.POST, request.FILES) #Si la request es de tipo POST se crea un formulario con los datos recibidos
+        if form.is_valid():
+            consulta = form.save(commit= False)
+            consulta.creador_id = request.user.id  #Se asigna el creador de la consulta como el usuario que está logueado
+            consulta.save() #Se guarda la consulta en la base de datos
+
+            # Guardar los tags seleccionados en la tabla de relación Consulta_tag
+            tags = form.cleaned_data.get('tag')
+            for tag in tags:
+                Consulta_tag.objects.create(consulta=consulta, tag=tag)
+            return redirect('forum')
+        return render(request, 'stack_overbuxef/publish.html', {'form': form}) # Si el formulario no es válido se renderiza nuevamente el formulario con los errores
 
 @login_required(login_url='/')
 def forum(request):
@@ -79,10 +90,11 @@ def login_user(request):
 			return HttpResponseRedirect('/forum') 
 		return HttpResponseRedirect('/register')
 
+
 @login_required
 def profile(request):
 	# Diccionario para renderizar adecuadamente el tipo de cuenta en la página
-	tipos = {"AU": "Auxiliar", "ES": "Estudiante", "AD": "Administrador"}
+	tipos = {"PR": "Profesor", "ES": "Estudiante", "AD": "Administrador"}
 
 	if request.method == 'GET':
 		return render(request, "profile.html", {"tipos": tipos, "error": ""})
@@ -118,3 +130,105 @@ def profile(request):
 		user.save()
 
 		return HttpResponseRedirect('/forum') 
+
+  
+def modalAnswers(request,consult_id):
+	consult = get_object_or_404(Consulta, id=consult_id)
+	answers = Respuesta.objects.filter(consulta=consult).order_by('votar')
+	paginator = Paginator(answers, 10)
+	page_number = request.GET.get('page')
+	page_obj = paginator.get_page(page_number)
+	return render(request, 'answers.html', {'page_obj': page_obj, 'consult': consult})
+
+@login_required(login_url='/')
+def makeModalAnswer(request, consult_id):
+	if request.method == 'GET':
+		form = AnswerForm
+		return render(request, 'publishAnswer.html', {'form': form, 'consult_id': consult_id})
+
+	elif request.method == 'POST':
+		form = AnswerForm(request.POST)
+		if form.is_valid():
+			respuesta = form.save(commit=False)
+			respuesta.creador = request.user  # Asignar el usuario logueado
+			respuesta.consulta = get_object_or_404(Consulta, id=consult_id)  # Obtener la consulta correspondiente
+			respuesta.save()
+			return redirect('forum')
+		else:
+			# Manejar el caso donde el formulario no es válido
+			# Puedes renderizar nuevamente el formulario con errores si es necesario
+			return render(request, 'publishAnswer.html', {'form': form, 'consult_id': consult_id})
+
+
+@login_required(login_url='/')
+def tags(request):
+	if request.method == 'GET':
+		# Acceder solo si es admin
+		if request.user.tipo != 'AD':
+			return HttpResponseRedirect('/forum')
+
+		# Renderizar tags
+		tags = Tag.objects.all()
+		tags = [{'nombre': tag.nombre, 'id': tag.id} for tag in tags]
+		return render(request, 'tags.html', {'tags': tags})
+
+	elif request.method == 'POST':
+		# Postear solo si es admin
+		if request.user.tipo != 'AD':
+			return HttpResponseRedirect('/forum')
+
+		# Subir lista de tags a la base de datos
+		tags = request.POST.getlist('tag')
+		tags = [tag.strip().lower() for tag in tags if tag]
+		if not tags:
+			return render(request, 'tags.html', {'error': 'Debes subir al menos una tag'})
+
+		for tag in tags:
+			# Crear tag si no existe
+			if not Tag.objects.filter(nombre=tag).exists():
+				Tag.objects.create(nombre=tag)
+
+		return redirect('/forum')
+
+
+@login_required(login_url='/')
+def deleteTag(request, tag_id):
+	if request.method == 'POST':
+		# Acceder solo si es admin
+		if request.user.tipo != 'AD':
+			return HttpResponseRedirect('/forum')
+
+		tag = Tag.objects.get(id=tag_id)
+		tag.delete()
+		return redirect('/tags')
+
+
+@login_required(login_url='/')
+def deleteComment(request, consult_id):
+	if request.method == 'GET':
+		# Acceder solo si es admin
+		if request.user.tipo != 'AD':
+			return HttpResponseRedirect('/forum')
+
+		# Borrar primero las respuestas
+		respuestas = Respuesta.objects.filter(consulta_id=consult_id)
+		for respuesta in respuestas:
+			respuesta.delete()
+
+		# Borrar comentario
+		comentario = Consulta.objects.get(id=consult_id)
+		comentario.delete()
+		return redirect('/forum')
+
+
+@login_required(login_url='/')
+def deleteReply(request, reply_id):
+	if request.method == 'GET':
+		# Acceder solo si es admin
+		if request.user.tipo != 'AD':
+			return HttpResponseRedirect('/forum')
+
+		# Borrar respuesta
+		respuesta = Respuesta.objects.get(id=reply_id)
+		respuesta.delete()
+		return redirect('/forum')

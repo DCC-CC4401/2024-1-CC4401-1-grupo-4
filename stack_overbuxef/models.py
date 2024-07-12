@@ -3,7 +3,8 @@ from django.db import models
 # Create your models here.
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import FileSystemStorage 
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 #En las variables fsPhotos y fsMedia tiene las direcciones de los archivos donde se guardaran las fotos y otro tipo de
@@ -17,7 +18,7 @@ options = [[0, "No anónimo"], [1, "Anónimo"]]
 #Esta clase se usara para crear la tabla categorias que va a tener los mensajes del foro.
 #Cuenta con la variable nombre como atributo.
 class Tag(models.Model):
-    nombre=models.CharField(max_length=50)
+    nombre = models.CharField(max_length=100)
     def __str__(self):
         return self.nombre
 
@@ -25,7 +26,7 @@ class Tag(models.Model):
 #Esta clase se usara para crear la tabla Rol que tendra los roles de los usuarios creados.
 #Cuenta con rol como atributo.
 class Rol(models.Model):
-    rol=models.CharField(max_length=20)
+    rol = models.CharField(max_length=20)
     def __str__(self):
         return self.rol  
 
@@ -36,8 +37,8 @@ class Rol(models.Model):
 class Usuario(AbstractUser):
     options = [
         ("ES", "Estudiante"),
-        ("AU", "Auxiliar"),
         ("AD", "Administrador"),
+        ("PR", "Profesor"),
     ]
     tipo = models.CharField(choices=options, max_length=2)
     foto = models.ImageField(upload_to=fsPhotos, blank=True)
@@ -46,8 +47,8 @@ class Usuario(AbstractUser):
 #Esta clase se usara para crear la tabla consulta que tendra todas las consultas que haga un usuario en el foro.
 class Consulta(models.Model):
     titulo=models.CharField(blank=False, null=False,max_length=100)
-    fecha_creacion=models.DateTimeField(default=timezone.now())
-    mensaje=models.TextField(blank=False,null=False)
+    fecha_creacion=models.DateTimeField(default=timezone.now)
+    mensaje = RichTextUploadingField('mensaje')
     creador=models.ForeignKey(Usuario, blank=False, null=False,on_delete=models.CASCADE)
     anonimo=models.BooleanField(null=False,default=0)
     multimedia = models.FileField(storage=fsMedia, blank=True, null=True)
@@ -58,9 +59,9 @@ class Consulta(models.Model):
 class Respuesta(models.Model):
     mensaje=models.TextField(blank=False,null=False)
     creador=models.ForeignKey(Usuario,blank=False,null=False,on_delete=models.CASCADE)
-    fecha_creacion=models.DateTimeField(default=timezone.now())
+    fecha_creacion=models.DateTimeField(default=timezone.now)
     consulta=models.ForeignKey(Consulta,null=False,blank=False,on_delete=models.CASCADE)
-    multimedia=models.FileField(storage=fsMedia)
+    multimedia=models.FileField(storage=fsMedia,blank=True, null=True)
     votar=models.IntegerField(default=0)
 
 
