@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from .forms import ConsultaForm, AnswerForm
-from .models import Consulta, Usuario, Consulta_respuesta, Respuesta, Tag
+from .models import Consulta, Usuario, Respuesta, Tag
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -167,4 +167,17 @@ def deleteComment(request, consult_id):
 		# Borrar comentario
 		comentario = Consulta.objects.get(id=consult_id)
 		comentario.delete()
+		return redirect('/forum')
+
+
+@login_required(login_url='/')
+def deleteReply(request, reply_id):
+	if request.method == 'GET':
+		# Acceder solo si es admin
+		if request.user.tipo != 'AD':
+			return HttpResponseRedirect('/forum')
+
+		# Borrar respuesta
+		respuesta = Respuesta.objects.get(id=reply_id)
+		respuesta.delete()
 		return redirect('/forum')

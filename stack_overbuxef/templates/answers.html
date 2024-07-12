@@ -1,5 +1,3 @@
-
-
 <div>
     <div>
         <i class="fa fa-user-circle center"></i>
@@ -25,7 +23,10 @@
                 {% endif %}
                 {{ answer.votar }}
             </p>
-            <small>Pulicada el {{answer.fecha_creacion}}</small>
+			{% if request.user.tipo == 'AD' %}
+				<button class="delete-reply" data-id="{{ answer.id }}"><i class="fa fa-trash"></i> Borrar</button><br>
+			{% endif %}
+            <small>Publicada el {{answer.fecha_creacion}}</small>
         </div>
         {% endfor %}
     </div>
@@ -39,5 +40,16 @@
         {% endif %}
     </div>
 </div>
-
-
+<script>
+	$(document).ready(function() {
+		$('.delete-reply').click(function() {
+			var replyId = $(this).data('id');
+			$.ajax({
+				url: '/deleteReply/' + replyId + '/',
+				success: function() {
+					location.reload(); // Recargar la página
+				}
+			});
+		});
+	});
+</script>

@@ -12,6 +12,7 @@ urlpatterns = [
     path('consults/<int:consult_id>/', views.modalAnswers, name='answers'),
     path('makeAnswer/<int:consult_id>/', views.makeModalAnswer, name='makeAnswer'),
 	path('deleteComment/<int:consult_id>/', views.deleteComment, name='deleteComment'),
+	path('deleteReply/<int:reply_id>/', views.deleteReply, name='deleteReply'),
 	path('tags', views.tags, name='tags'),
 	path('delete_tag/<int:tag_id>/', views.deleteTag, name='delete_tag')
 ]
