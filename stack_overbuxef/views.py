@@ -141,7 +141,7 @@ def tags(request):
 
 
 @login_required(login_url='/')
-def delete_tag(request, tag_id):
+def deleteTag(request, tag_id):
 	if request.method == 'POST':
 		# Acceder solo si es admin
 		if request.user.tipo != 'AD':
@@ -150,3 +150,21 @@ def delete_tag(request, tag_id):
 		tag = Tag.objects.get(id=tag_id)
 		tag.delete()
 		return redirect('/tags')
+
+
+@login_required(login_url='/')
+def deleteComment(request, consult_id):
+	if request.method == 'GET':
+		# Acceder solo si es admin
+		if request.user.tipo != 'AD':
+			return HttpResponseRedirect('/forum')
+
+		# Borrar primero las respuestas
+		respuestas = Respuesta.objects.filter(consulta_id=consult_id)
+		for respuesta in respuestas:
+			respuesta.delete()
+
+		# Borrar comentario
+		comentario = Consulta.objects.get(id=consult_id)
+		comentario.delete()
+		return redirect('/forum')

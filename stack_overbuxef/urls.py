@@ -8,9 +8,10 @@ urlpatterns = [
     # path('logout',views.logout_user, name='logout'),
     path('forum', views.forum, name='forum'),
     path('message', views.publish_message, name='message'),
-    path("admin/", admin.site.urls),
-    path("consults/<int:consult_id>/", views.modalAnswers, name='answers'),
-    path("makeAnswer/<int:consult_id>/", views.makeModalAnswer, name='makeAnswer'),
+    path('admin/', admin.site.urls),
+    path('consults/<int:consult_id>/', views.modalAnswers, name='answers'),
+    path('makeAnswer/<int:consult_id>/', views.makeModalAnswer, name='makeAnswer'),
+	path('deleteComment/<int:consult_id>/', views.deleteComment, name='deleteComment'),
 	path('tags', views.tags, name='tags'),
-	path('delete_tag/<int:tag_id>/', views.delete_tag, name='delete_tag')
+	path('delete_tag/<int:tag_id>/', views.deleteTag, name='delete_tag')
 ]

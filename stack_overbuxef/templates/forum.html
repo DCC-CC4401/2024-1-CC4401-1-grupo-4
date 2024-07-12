@@ -55,8 +55,11 @@
                 <small>Publicada el {{ consulta.fecha_creacion }}</small>
             </div>
             <div>
-                <button class="consult-link" data-id="{{consulta.id }}" data-toggle="modal" data-target="#answerModal"><i class="fa fa-comments"></i> Respuestas</button>
-                <button class="answer-consult" data-id="{{consulta.id}}" data-toggle="modal" data-target="#makeAnswerModal"><i class="fa fa-reply"></i> Responder</button>
+                <button class="consult-link" data-id="{{ consulta.id }}" data-toggle="modal" data-target="#answerModal"><i class="fa fa-comments"></i> Respuestas</button>
+                <button class="answer-consult" data-id="{{ consulta.id }}" data-toggle="modal" data-target="#makeAnswerModal"><i class="fa fa-reply"></i> Responder</button>
+				{% if request.user.tipo == 'AD' %}
+					<button class="delete-comment" data-id="{{ consulta.id }}"><i class="fa fa-trash"></i> Borrar</button>
+				{% endif %}
             </div>
         </div>
         <hr>
@@ -134,6 +137,16 @@
                 }
             });
         });
+
+		$('.delete-comment').click(function() {
+			var consultId = $(this).data('id');
+			$.ajax({
+				url: '/deleteComment/' + consultId + '/',
+				success: function() {
+					location.reload(); // Recargar la página
+				}
+			});
+		});
     });
     </script>
 </body>
