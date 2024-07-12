@@ -1,0 +1,55 @@
+<div>
+    <div>
+        <i class="fa fa-user-circle center"></i>
+        {% if consult.anonimo %}
+            <a>Anónimo</a>
+        {% else %}
+            <a href="#">{{ consult.creador.username }}</a>
+        {% endif %}
+    </div>
+    <h2>{{consult.titulo}}</h2>
+    <p>{{consult.mensaje}}</p>
+    <div>
+        {% for answer in page_obj %}
+        <div>
+            <i class="fa fa-user-circle center"></i>
+            <a href="#">{{ answer.creador.username }}</a>
+            <p>{{ answer.mensaje }}</p>
+            <p>
+                {% if consulta.votar >= 0 %}
+                    <i class="fa fa-thumbs-up"></i>
+                {% else %}
+                    <i class="fa fa-thumbs-down"></i>
+                {% endif %}
+                {{ answer.votar }}
+            </p>
+			{% if request.user.tipo == 'AD' %}
+				<button class="delete-reply" data-id="{{ answer.id }}"><i class="fa fa-trash"></i> Borrar</button><br>
+			{% endif %}
+            <small>Publicada el {{answer.fecha_creacion}}</small>
+        </div>
+        {% endfor %}
+    </div>
+    <div>
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+    </div>
+</div>
+<script>
+	$(document).ready(function() {
+		$('.delete-reply').click(function() {
+			var replyId = $(this).data('id');
+			$.ajax({
+				url: '/deleteReply/' + replyId + '/',
+				success: function() {
+					location.reload(); // Recargar la página
+				}
+			});
+		});
+	});
+</script>

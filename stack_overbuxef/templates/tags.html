@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Tags</title>
+    <script>
+        function addField() {
+            let tags = document.getElementById('tags');
+            let newField = document.createElement('input');
+            newField.setAttribute('type', 'text');
+            newField.setAttribute('name', 'tag');
+            newField.setAttribute('placeholder', 'Tag');
+            tags.appendChild(document.createElement('br'));
+            tags.appendChild(newField);
+        }
+
+		function removeField() {
+			let tags = document.getElementById('tags');
+            let inputs = tags.getElementsByTagName('input');
+			if (inputs.length > 1) {
+				tags.removeChild(tags.lastElementChild);
+				tags.removeChild(tags.lastElementChild);
+			}
+		}
+    </script>
+</head>
+<body>
+	<div class="create">
+		<h1>Crear Tags</h1>
+		<form method="post">
+			{% csrf_token %}
+			<div id="tags">
+				<input type="text" name="tag" placeholder="Tag">
+			</div>
+			<button type="button" onclick="addField()">+</button>
+			<button type="button" onclick="removeField()">-</button><br>
+			<input type="submit" value="Subir">
+			<p>{{ error }}</p>
+		</form>
+	</div>
+	<div class="remove">
+		<h1>Borrar Tags</h1>
+        <ul>
+		{% for tag in tags %}
+			<li>
+				{{ tag.nombre }}
+				<form method="post" action="{% url 'delete_tag' tag.id %}" style="display:inline;">
+					{% csrf_token %}
+					<button type="submit" style="background:none;color:red;font-size:16px;">&#x2716;</button>
+				</form>
+			</li>
+		{% endfor %}
+        </ul>
+	</div>
+	<a href="{% url 'forum' %}">Volver</a>
+</body>
+</html>

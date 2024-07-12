@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Respuesta</title>
+</head>
+<body>
+    <a href="{% url 'forum' %}"><button>Volver al foro</button></a>
+    <h1>Respuesta</h1>
+
+    <form method="POST" action="{% url 'makeAnswer' consult_id=consult_id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html>
