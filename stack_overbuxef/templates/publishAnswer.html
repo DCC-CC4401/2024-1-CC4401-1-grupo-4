@@ -4,13 +4,13 @@
     <title>Respuesta</title>
 </head>
 <body>
-    <a href="{% url 'forum' %}"><button>Volver al foro</button></a>
+    <a href="{% url 'forum' %}"><button class="btn btn-danger shadow mb-1">Volver al foro</button></a>
     <h1>Respuesta</h1>
 
     <form method="POST" action="{% url 'makeAnswer' consult_id=consult_id %}">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Enviar</button>
+        <button type="submit" class="btn btn-danger shadow mb-1">Enviar</button>
     </form>
 </body>
 </html>
