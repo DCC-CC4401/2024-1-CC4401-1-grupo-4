@@ -108,7 +108,6 @@ def profile(request, user_id=None):
 		# print(user_id)
 		if user_id:
 			other = Usuario.objects.get(id=user_id)
-			print(other.foto)
 			user_info = {"id": other.id, "username": other.username, "tipo": tipos.get(other.tipo), "email": other.email, "foto": other.foto}
 		else:
 			user = request.user
@@ -139,7 +138,6 @@ def profile(request, user_id=None):
 				return render(request, "profile.html", {"tipos": tipos, "error": f"Elige un correo distinto al actual"})
 			user.email = correo
 		if tipo:
-			print(tipo)
 			user.tipo = tipo
 		if foto:
 			file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
