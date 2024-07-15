@@ -21,6 +21,8 @@
                 {% else %}
                     <i class="fa fa-thumbs-down"></i>
                 {% endif %}
+                <button class="like-button" data-id="{{ answer.id }}"><i class="fa fa-thumbs-up"></i> Me gusta</button>
+                <button class="dislike-button" data-id="{{ answer.id }}"><i class="fa fa-thumbs-down"></i> No me gusta</button>
                 {{ answer.votar }}
             </p>
 			{% if request.user.tipo == 'AD' %}
@@ -41,15 +43,35 @@
     </div>
 </div>
 <script>
-	$(document).ready(function() {
-		$('.delete-reply').click(function() {
-			var replyId = $(this).data('id');
-			$.ajax({
-				url: '/deleteReply/' + replyId + '/',
-				success: function() {
-					location.reload(); // Recargar la página
-				}
-			});
-		});
-	});
+    $(document).ready(function() {
+        $('.like-button').click(function() {
+            var answerId = $(this).data('id');
+            $.ajax({
+                url: '/like1/' + answerId + '/',
+                success: function() {
+                    location.reload(); // Recargar la página
+                }
+            });
+        });
+
+        $('.dislike-button').click(function() {
+            var answerId = $(this).data('id');
+            $.ajax({
+                url: '/dislike1/' + answerId + '/',
+                success: function() {
+                    location.reload(); // Recargar la página
+                }
+            });
+        });
+
+        $('.delete-reply').click(function() {
+            var replyId = $(this).data('id');
+            $.ajax({
+                url: '/deleteReply/' + replyId + '/',
+                success: function() {
+                    location.reload(); // Recargar la página
+                }
+            });
+        });
+    });
 </script>

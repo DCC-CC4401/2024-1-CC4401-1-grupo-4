@@ -23,6 +23,8 @@ urlpatterns = [
     path('delete_tag/<int:tag_id>/', views.deleteTag, name='delete_tag'),
     path('select2/', include("django_select2.urls")),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('like1/<int:answer_id>/', views.like_answer, name='like_answer'),
+    path('dislike1/<int:answer_id>/', views.dislike_answer, name='dislike_answer'),
     path('like/<int:id>/', views.like_consulta, name='like_consulta'),
     path('dislike/<int:id>/', views.dislike_consulta, name='dislike_consulta')
 ]
