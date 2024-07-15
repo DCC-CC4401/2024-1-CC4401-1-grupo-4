@@ -9,7 +9,7 @@ from django.conf import settings
 urlpatterns = [
     path('', views.login_user, name='login'),
     path('register', views.register_user, name='register_user'),
-    # path('logout',views.logout_user, name='logout'),
+    path('logout',views.logout_user, name='logout'),
     path('forum', views.forum, name='forum'),
     path('message', views.publish_message, name='message'),
     path('profile', views.profile, name='profile'),

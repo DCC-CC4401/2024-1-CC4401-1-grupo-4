@@ -93,6 +93,9 @@ def login_user(request):
 			return HttpResponseRedirect('/forum') 
 		return HttpResponseRedirect('/register')
 
+def logout_user(request):
+    logout(request)
+    return HttpResponseRedirect('/')
 
 @login_required
 def profile(request, user_id=None):
