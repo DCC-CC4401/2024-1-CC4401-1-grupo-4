@@ -14,6 +14,14 @@
 		margin-left: 80px; 
 		margin-right: 80px; 
 	}
+	img {
+		max-width: 50%;
+	}
+	#pic {
+		margin-bottom: 12px;
+		border-radius: 50%;
+		border: 2px solid black;
+	}
 </style>
 
 <body>
@@ -44,10 +52,10 @@
 		</button>
 	</a>
 
-	<div class="margins">
-		<h1>Perfil</h1>
+	<div class="margins d-flex justify-content-center">
 		<div>
-			<img src="{{ user_info.foto.url }}" alt="profile picture">
+			<h1>Perfil</h1>
+			<img src="{{ user_info.foto.url }}" alt="profile picture" id="pic">
 			<p><b>Nombre:</b> {{ user_info.username }}</p>
 			<p><b>Tipo de cuenta:</b> {{ user_info.tipo }}</p>
 			<p><b>Correo:</b> {{ user_info.email }}</p>
@@ -58,10 +66,10 @@
 			<form method="post" enctype="multipart/form-data">
 				{% csrf_token %}
 				<label for="nombre">Nombre:</label><br>
-				<input type="text" name="nombre" class="form-control shadow" placeholder="Ingrese su nuevo nombre de usuario" style="width: 50%;"><br>
+				<input type="text" name="nombre" class="form-control shadow" placeholder="Ingrese su nuevo nombre de usuario" style="width: 80%;"><br>
 
 				<label for="rol">Rol:</label><br>
-				<div class="input-group mb-3" style="width: 50%;">
+				<div class="input-group mb-3" style="width: 80%;">
                     <select class="form-control" name="tipo" id="tipo" >
                         <option class="disabled" value="">Elige un tipo de usuario</option>
                         <option value="ES">Estudiante</option>
@@ -71,7 +79,7 @@
                 </div><br>
 
 				<label for="correo">Correo:</label><br>
-				<div class="input-group mb-3" style="width: 50%;">
+				<div class="input-group mb-3" style="width: 80%;">
                     <span class="input-group-text" id="basic-addon1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
                             <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
@@ -81,7 +89,7 @@
                 </div><br>
 
 				<label for="foto">Foto de perfil:</label><br>
-				<input type="file" id="foto" name="foto" class="form-control" style="width: 50%;"><br>
+				<input type="file" id="foto" name="foto" class="form-control" style="width: 80%;"><br>
 
 				<input type="submit" name="update" id="update" class="btn btn-danger shadow mb-2"  style="width: 50%;" value="Actualizar Información" >
 			</form>
