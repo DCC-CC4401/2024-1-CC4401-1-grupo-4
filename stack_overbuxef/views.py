@@ -233,3 +233,27 @@ def deleteReply(request, reply_id):
 		respuesta = Respuesta.objects.get(id=reply_id)
 		respuesta.delete()
 		return redirect('/forum')
+
+@login_required
+
+@login_required
+def like_answer(request, answer_id):
+    # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
+    answer = get_object_or_404(Respuesta, id=answer_id)
+    # Incrementa el contador de votos de la respuesta en 1
+    answer.votar += 1
+    # Guarda los cambios en la base de datos
+    answer.save()
+    # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
+    return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
+
+@login_required
+def dislike_answer(request, answer_id):
+    # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
+    answer = get_object_or_404(Respuesta, id=answer_id)
+    # Decrementa el contador de votos de la respuesta en 1
+    answer.votar -= 1
+    # Guarda los cambios en la base de datos
+    answer.save()
+    # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
+    return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
