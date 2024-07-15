@@ -41,7 +41,7 @@ class Usuario(AbstractUser):
         ("PR", "Profesor"),
     ]
     tipo = models.CharField(choices=options, max_length=2)
-    foto = models.ImageField(upload_to=fsPhotos, blank=True)
+    foto = models.ImageField(upload_to=fsPhotos, blank=False, null=False, default="media/fotos_usuarios/default.png")
 
 
 #Esta clase se usara para crear la tabla consulta que tendra todas las consultas que haga un usuario en el foro.
@@ -52,12 +52,16 @@ class Consulta(models.Model):
     creador=models.ForeignKey(Usuario, blank=False, null=False,on_delete=models.CASCADE)
     anonimo=models.BooleanField(null=False,default=0)
     multimedia = models.FileField(storage=fsMedia, blank=True, null=True)
-    votar=models.IntegerField(default=0) 
+    votar=models.IntegerField(default=0)
+    users_liked = models.ManyToManyField(Usuario, related_name='consultas_liked', blank=True)
+    users_disliked = models.ManyToManyField(Usuario, related_name='consultas_disliked', blank=True)
+    
+
 
 
 #Esta clase se usara para crear la tabla Respuesta que tendra todas las respuestas asociadas a alguna consulta.
 class Respuesta(models.Model):
-    mensaje=models.TextField(blank=False,null=False)
+    mensaje = RichTextUploadingField('respuesta')
     creador=models.ForeignKey(Usuario,blank=False,null=False,on_delete=models.CASCADE)
     fecha_creacion=models.DateTimeField(default=timezone.now)
     consulta=models.ForeignKey(Consulta,null=False,blank=False,on_delete=models.CASCADE)

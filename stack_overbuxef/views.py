@@ -24,7 +24,9 @@ def publish_message(request):
             consulta = form.save(commit= False)
             consulta.creador_id = request.user.id  #Se asigna el creador de la consulta como el usuario que está logueado
             consulta.save() #Se guarda la consulta en la base de datos
-
+            if (request.FILES.get('multimedia')): # Si se subió una foto
+                file_name = default_storage.save(rf"fotos_consultas/{consulta.multimedia}", request.FILES.get('multimedia')) # Se guarda la multimedia en la carpeta correspondiente
+                consulta.multimedia = rf"media/{file_name}" # Se guarda la multimedia en la consulta
             # Guardar los tags seleccionados en la tabla de relación Consulta_tag
             tags = form.cleaned_data.get('tag')
             for tag in tags:
@@ -71,7 +73,9 @@ def register_user(request):
 			foto = request.FILES.get('foto')
 			if foto:
 				file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
-			Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=rf"media/{file_name}" if foto else None)
+				Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=rf"media/{file_name}")
+			else:
+				Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo)
 
 		# Redireccionar a la página de /login
 		return HttpResponseRedirect('/')
@@ -91,14 +95,23 @@ def login_user(request):
 			return HttpResponseRedirect('/forum') 
 		return HttpResponseRedirect('/register')
 
+def logout_user(request):
+    logout(request)
+    return HttpResponseRedirect('/')
 
 @login_required
-def profile(request):
+def profile(request, user_id=None):
 	# Diccionario para renderizar adecuadamente el tipo de cuenta en la página
 	tipos = {"PR": "Profesor", "ES": "Estudiante", "AD": "Administrador"}
 
 	if request.method == 'GET':
-		return render(request, "profile.html", {"tipos": tipos, "error": ""})
+		if user_id:
+			other = Usuario.objects.get(id=user_id)
+			user_info = {"id": other.id, "username": other.username, "tipo": tipos.get(other.tipo), "email": other.email, "foto": other.foto}
+		else:
+			user = request.user
+			user_info = {"id": user.id, "username": user.username, "tipo": tipos.get(user.tipo), "email": user.email, "foto": user.foto}
+		return render(request, "profile.html", {"user": user_info, "tipos": tipos, "error": ""})
 
 	elif request.method == 'POST':
 		# Nueva información del usuario
@@ -132,7 +145,7 @@ def profile(request):
 
 		return HttpResponseRedirect('/forum') 
 
-  
+
 def modalAnswers(request,consult_id):
 	consult = get_object_or_404(Consulta, id=consult_id)
 	answers = Respuesta.objects.filter(consulta=consult).order_by('votar')
@@ -141,10 +154,11 @@ def modalAnswers(request,consult_id):
 	page_obj = paginator.get_page(page_number)
 	return render(request, 'answers.html', {'page_obj': page_obj, 'consult': consult})
 
+
 @login_required(login_url='/')
 def makeModalAnswer(request, consult_id):
 	if request.method == 'GET':
-		form = AnswerForm
+		form = AnswerForm(request.POST, request.FILES)
 		return render(request, 'publishAnswer.html', {'form': form, 'consult_id': consult_id})
 
 	elif request.method == 'POST':
@@ -153,6 +167,9 @@ def makeModalAnswer(request, consult_id):
 			respuesta = form.save(commit=False)
 			respuesta.creador = request.user  # Asignar el usuario logueado
 			respuesta.consulta = get_object_or_404(Consulta, id=consult_id)  # Obtener la consulta correspondiente
+			if (request.FILES.get('multimedia')): # Si se subió una foto
+				file_name = default_storage.save(rf"fotos_respuestas/{request.FILES.get('multimedia')}", request.FILES.get('multimedia')) # Se guarda la multimedia en la carpeta correspondiente
+				respuesta.multimedia = rf"media/{file_name}" # Se guarda la multimedia en la consulta
 			respuesta.save()
 			return redirect('forum')
 		else:
@@ -233,9 +250,6 @@ def deleteReply(request, reply_id):
 		respuesta = Respuesta.objects.get(id=reply_id)
 		respuesta.delete()
 		return redirect('/forum')
-
-@login_required
-
 @login_required
 def like_answer(request, answer_id):
     # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
@@ -257,3 +271,37 @@ def dislike_answer(request, answer_id):
     answer.save()
     # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
     return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
+	
+@login_required
+def like_consulta(request, id):
+    consulta = get_object_or_404(Consulta, id=id)
+    
+    if request.user in consulta.users_liked.all():
+        consulta.users_liked.remove(request.user)
+        consulta.votar -= 1
+    else:
+        if request.user in consulta.users_disliked.all():
+            consulta.users_disliked.remove(request.user)
+            consulta.votar += 1  # Si estaba en dislike, incrementamos
+        consulta.users_liked.add(request.user)
+        consulta.votar += 1
+    
+    consulta.save()
+    return JsonResponse({'votar': consulta.votar})
+
+@login_required
+def dislike_consulta(request, id):
+    consulta = get_object_or_404(Consulta, id=id)
+    
+    if request.user in consulta.users_disliked.all():
+        consulta.users_disliked.remove(request.user)
+        consulta.votar += 1
+    else:
+        if request.user in consulta.users_liked.all():
+            consulta.users_liked.remove(request.user)
+            consulta.votar -= 1  # Si estaba en like, decrementamos
+        consulta.users_disliked.add(request.user)
+        consulta.votar -= 1
+    
+    consulta.save()
+    return JsonResponse({'votar': consulta.votar})

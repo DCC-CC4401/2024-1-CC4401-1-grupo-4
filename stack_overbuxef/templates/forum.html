@@ -17,16 +17,18 @@
             }
         });
     </script>
+    <style>
+        .margins {
+            margin-left: 80px; /* Ajusta el valor según tus necesidades */
+            margin-right: 80px; /* Ajusta el valor según tus necesidades */
+        }
+    </style>
 </head>
 <body>
     <header>
-	<div>
-		{% if request.user.tipo == 'AD' %}
-		<a href="{% url 'tags' %}">Crear tags</a>
-		{% endif %}
-	</div>
+    <!-- Barra de navegación -->
     {% load static %}
-    <nav class="navbar shadow" style="background-color: #ed7d7d;">
+    <nav class="navbar shadow" style="background-color: #ed7d7d; margin-bottom:0.5cm;">
         <div class="container-fluid">
             <!-- Logo a la izquierda -->
             <a class="navbar-brand" href="forum">
@@ -38,7 +40,7 @@
             <div class="d-flex flex-grow-1"></div>
             
             <!-- Botón del icono del usuario a la derecha -->
-            <button class="btn btn-outline-light d-flex align-items-center me-2" type="button" onclick="window.location.href='profile'">
+            <button class="btn btn-outline-light d-flex align-items-center me-2" type="button" onclick="window.location.href='profile'" style='margin-right:16px'>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ffffff" class="bi bi-person-circle" viewBox="0 0 16 16">
                     <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
                     <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
@@ -48,29 +50,38 @@
 
             <!-- Botón de cerrar sesión más a la derecha -->
             <form class="form-inline">
-                <button class="btn btn-outline-light" type="button">Cerrar sesión</button>
+                <button class="btn btn-outline-light" type="button" onclick="window.location.href='logout'">Cerrar sesión</button>
             </form>
         </div>
     </nav>   
     
+
     <style>
         .margins {
             margin-left: 40px; /* Ajusta el valor según tus necesidades */
             margin-right: 40px; /* Ajusta el valor según tus necesidades */
         }
+
+        .selected {
+            color: #dc3545; 
+            font-weight: bold;
+        }
     </style>
     
-    <header class="margins">
+    <header class="margins" style="margin-bottom:1cm;">
         <div>
             <h1>Foro</h1>
         </div>
 
         <div>
             <form method="get" action="" class="form-inline">
-                <input type="text" class="btn border shadow mb-2" style="width: 20%;" name="q" placeholder="Busque una pregunta" value="{{ query|default_if_none:'' }}">
-                <button type="submit" class="btn btn-danger shadow mb-2" style="width: 5%;"><i class="fa fa-search"></i></button>
-            </form>
+                <input type="text" class="form-control shadow" name="q" placeholder="Busque una pregunta" value="{{ query|default_if_none:'' }}">
+                <button type="submit" class="btn btn-danger shadow" style="width: 5%;"><i class="fa fa-search"></i></button>
+            </form><br>
             <a href="{% url 'message' %}"><button class="btn btn-danger shadow mb-1">Publicar</button></a>
+            {% if request.user.tipo == 'AD' %}
+                <a href="{% url 'tags' %}"><button class="btn btn-danger shadow mb-1">Crear Tags</button></a>
+            {% endif %}
         </div>
     </header>   
 
@@ -84,7 +95,7 @@
                 {% if consulta.anonimo %}
                     <a>Anónimo</a>
                 {% else %}
-                    <a href="#">{{ consulta.creador.username }}</a>
+                    <a href="{% url 'other_profile' consulta.creador.id %}">{{ consulta.creador.username }}</a>
                 {% endif %}
             </div>
             <div>
@@ -93,23 +104,20 @@
             </div>
             <div>
                 <p>
-                    {% if consulta.votar >= 0 %}
-                        <i class="fa fa-thumbs-up"></i>
-                    {% else %}
-                        <i class="fa fa-thumbs-down"></i>
-                    {% endif %}
-                    {{ consulta.votar }}
+                    <i class="fa fa-arrow-up like-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
+                    <span id="votar-{{ consulta.id }}">{{ consulta.votar }}</span>
+                    <i class="fa fa-arrow-down dislike-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
                 </p>
             </div>
             <div style="display: flex; justify-content: flex-end">
                 <small>Publicada el {{ consulta.fecha_creacion }}</small>
             </div>
             <div style="display: flex; justify-content: flex-end">
-                <button class="consult-link btn btn-danger shadow mb-2" data-id="{{ consulta.id }}" data-toggle="modal" data-target="#answerModal"><i class="fa fa-comments"></i> Respuestas</button>
-                <button class="answer-consult btn btn-danger shadow mb-2" data-id="{{ consulta.id }}" data-toggle="modal" data-target="#makeAnswerModal"><i class="fa fa-reply"></i> Responder</button>
+                <button class="consult-link btn btn-danger shadow mb-2" data-id="{{ consulta.id }}" data-toggle="modal" data-target="#answerModal" style="margin-right: 10px;"><i class="fa fa-comments"></i> Respuestas</button>
+                <button class="answer-consult btn btn-danger shadow mb-2" data-id="{{ consulta.id }}" data-toggle="modal" data-target="#makeAnswerModal" style="margin-right: 10px;"><i class="fa fa-reply"></i> Responder</button>
                 {% if request.user.tipo == 'AD' %}
-					<button class="delete-comment" data-id="{{ consulta.id }}"><i class="fa fa-trash"></i> Borrar</button>
-				{% endif %}
+                    <button class="delete-comment btn btn-danger shadow mb-2" data-id="{{ consulta.id }}"><i class="fa fa-trash"></i> Borrar</button>
+                {% endif %}
             </div>
         </div>
         <hr>
@@ -134,7 +142,7 @@
     </div>
     <!--modal-->
     <div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="answerModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="answerModalLabel">Respuestas</h5>
@@ -149,7 +157,7 @@
     </div>
     <!-- Modal para responder -->
     <div class="modal fade" id="makeAnswerModal" tabindex="-1" role="dialog" aria-labelledby="makeAnswerModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="makeAnswerModalLabel">Escribe tu respuesta</h5>
@@ -172,11 +180,12 @@
                 success: function(data) {
                     $('#modal-body').html(data);
                     $('#answerModal').modal('show'); // Mostrar el modal después de cargar los datos
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
                 }
             });
         });
 
-        // Modal para respondeR
+        // Modal para responder
         $('.answer-consult').click(function(){
             var consultId = $(this).data('id');
             $.ajax({
@@ -188,6 +197,10 @@
             });
         });
 
+        $('#makeAnswerModal').on('shown.bs.modal', function() {
+            $(document).off('focusin.modal');
+        });
+
 		$('.delete-comment').click(function() {
 			var consultId = $(this).data('id');
 			$.ajax({
@@ -197,6 +210,32 @@
 				}
 			});
 		});
+
+        // Dar like
+        $('.like-button').click(function(){
+            var consultId = $(this).data('id');
+            $.ajax({
+                url: '/like/' + consultId + '/',
+                success: function(data) {
+                    $('#votar-' + consultId).text(data.votar);
+                    $('.like-button[data-id="' + consultId + '"]').toggleClass('selected');
+                    $('.dislike-button[data-id="' + consultId + '"]').removeClass('selected'); // Elimina el estado de dislike
+                }
+            });
+        });
+
+        // Dar dislike
+        $('.dislike-button').click(function(){
+            var consultId = $(this).data('id');
+            $.ajax({
+                url: '/dislike/' + consultId + '/',
+                success: function(data) {
+                    $('#votar-' + consultId).text(data.votar);
+                    $('.dislike-button[data-id="' + consultId + '"]').toggleClass('selected');
+                    $('.like-button[data-id="' + consultId + '"]').removeClass('selected'); // Elimina el estado de like
+                }
+            });
+        });
     });
     </script>
 </body>
