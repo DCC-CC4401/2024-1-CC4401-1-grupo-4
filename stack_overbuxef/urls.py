@@ -13,6 +13,7 @@ urlpatterns = [
     path('forum', views.forum, name='forum'),
     path('message', views.publish_message, name='message'),
     path('profile', views.profile, name='profile'),
+    path('profile/<int:user_id>', views.profile, name='other_profile'),
     path('admin/', admin.site.urls),
     path('consults/<int:consult_id>/', views.modalAnswers, name='answers'),
     path('makeAnswer/<int:consult_id>/', views.makeModalAnswer, name='makeAnswer'),

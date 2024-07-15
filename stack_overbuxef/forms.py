@@ -7,13 +7,13 @@ from ckeditor.widgets import CKEditorWidget
 class AnswerForm(forms.ModelForm):
 	class Meta:
 		model = Respuesta
-		fields = ['mensaje']
+		fields = ['mensaje', 'multimedia']
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
 		# Modificar widgets para personalizar la apariencia
-		self.fields['mensaje'].widget = forms.Textarea(attrs={'rows': 15, 'cols': 30})  # Ajustar tamaño de la caja de texto
+		self.fields['mensaje'] = forms.CharField(widget=CKEditorWidget(config_name='default'))
 
 #Clase formulario para la creación de una consulta
 class ConsultaForm(forms.ModelForm):

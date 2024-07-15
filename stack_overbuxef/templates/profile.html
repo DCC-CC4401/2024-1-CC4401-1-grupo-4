@@ -8,11 +8,12 @@
 <body>
 	<div>
 		<div>
-			<img src="{{ request.user.foto }}" alt="profile picture">
-			<p><b>Nombre:</b> {{ request.user.username }}</p>
-			<p><b>Tipo de cuenta:</b> {% for key, value in tipos.items %} {% if key == request.user.tipo %} {{value}} {% endif %} {% endfor %}</p>
-			<p><b>Correo:</b> {{ request.user.email }}</p>
+			<img src="{{ user.foto }}" alt="profile picture">
+			<p><b>Nombre:</b> {{ user.username }}</p>
+			<p><b>Tipo de cuenta:</b> {{ user.tipo }}</p>
+			<p><b>Correo:</b> {{ user.email }}</p>
 		</div>
+		{% if user.id == request.user.id %}
 		<div>
 			<h2>Editar información personal:</h2>
 			<form method="post" enctype="multipart/form-data">
@@ -38,6 +39,7 @@
 			</form>
 			<p>{{ error }}</p>
 		</div>
+		{% endif %}
 	</div>
 	<a href="{% url 'forum' %}">Volver</a>
 </body>

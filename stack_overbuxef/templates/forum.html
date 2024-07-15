@@ -9,14 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                processEscapes: true
-            }
-        });
-    </script>
 </head>
 <body>
     <header>
@@ -84,7 +76,7 @@
                 {% if consulta.anonimo %}
                     <a>Anónimo</a>
                 {% else %}
-                    <a href="#">{{ consulta.creador.username }}</a>
+                    <a href="{% url 'other_profile' consulta.creador.id %}">{{ consulta.creador.username }}</a>
                 {% endif %}
             </div>
             <div>
@@ -172,11 +164,12 @@
                 success: function(data) {
                     $('#modal-body').html(data);
                     $('#answerModal').modal('show'); // Mostrar el modal después de cargar los datos
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
                 }
             });
         });
 
-        // Modal para respondeR
+        // Modal para responder
         $('.answer-consult').click(function(){
             var consultId = $(this).data('id');
             $.ajax({
@@ -186,6 +179,10 @@
                     $('#makeAnswerModal').modal('show'); // Mostrar el modal después de cargar los datos
                 }
             });
+        });
+
+        $('#makeAnswerModal').on('shown.bs.modal', function() {
+            $(document).off('focusin.modal');
         });
 
 		$('.delete-comment').click(function() {

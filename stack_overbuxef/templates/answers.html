@@ -8,13 +8,13 @@
         {% endif %}
     </div>
     <h2>{{consult.titulo}}</h2>
-    <p>{{consult.mensaje}}</p>
+    <p>{{consult.mensaje|safe}}</p>
     <div>
         {% for answer in page_obj %}
         <div>
             <i class="fa fa-user-circle center"></i>
             <a href="#">{{ answer.creador.username }}</a>
-            <p>{{ answer.mensaje }}</p>
+            <p>{{ answer.mensaje|safe}}</p>
             <p>
                 {% if consulta.votar >= 0 %}
                     <i class="fa fa-thumbs-up"></i>
