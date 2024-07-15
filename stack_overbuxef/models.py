@@ -41,7 +41,7 @@ class Usuario(AbstractUser):
         ("PR", "Profesor"),
     ]
     tipo = models.CharField(choices=options, max_length=2)
-    foto = models.ImageField(upload_to=fsPhotos, blank=True, default="media/fotos_usuarios/default.png")
+    foto = models.ImageField(upload_to=fsPhotos, blank=False, null=False, default="media/fotos_usuarios/default.png")
 
 
 #Esta clase se usara para crear la tabla consulta que tendra todas las consultas que haga un usuario en el foro.

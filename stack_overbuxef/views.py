@@ -71,7 +71,9 @@ def register_user(request):
 			foto = request.FILES.get('foto')
 			if foto:
 				file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
-			Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=rf"media/{file_name}" if foto else None)
+				Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=rf"media/{file_name}")
+			else:
+				Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo)
 
 		# Redireccionar a la página de /login
 		return HttpResponseRedirect('/')
