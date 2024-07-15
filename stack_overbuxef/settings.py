@@ -142,9 +142,6 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 AUTH_USER_MODEL = 'stack_overbuxef.Usuario'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_IMAGE_BACKEND = "pillow"
 
