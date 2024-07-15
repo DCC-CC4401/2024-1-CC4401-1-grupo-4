@@ -40,7 +40,7 @@ def forum(request):
 	if query: # Si hay algo ingresado en el buscador
 		consultas = Consulta.objects.filter(titulo__icontains=query) # Filtra las consultas por el título de estas
 	else: # Si no
-		consultas = Consulta.objects.all() # Se devuelven todas las consultas
+		consultas = Consulta.objects.order_by('-fecha_creacion') # Se devuelven todas las consultas ordenadas por fecha de creación en orden descendiente
 
 	paginator = Paginator(consultas, 10)  # Muestra 10 consultas por página
 
@@ -253,6 +253,27 @@ def deleteReply(request, reply_id):
 		respuesta = Respuesta.objects.get(id=reply_id)
 		respuesta.delete()
 		return redirect('/forum')
+@login_required
+def like_answer(request, answer_id):
+    # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
+    answer = get_object_or_404(Respuesta, id=answer_id)
+    # Incrementa el contador de votos de la respuesta en 1
+    answer.votar += 1
+    # Guarda los cambios en la base de datos
+    answer.save()
+    # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
+    return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
+
+@login_required
+def dislike_answer(request, answer_id):
+    # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
+    answer = get_object_or_404(Respuesta, id=answer_id)
+    # Decrementa el contador de votos de la respuesta en 1
+    answer.votar -= 1
+    # Guarda los cambios en la base de datos
+    answer.save()
+    # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
+    return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
 
 @login_required
 def like_consulta(request, id):
