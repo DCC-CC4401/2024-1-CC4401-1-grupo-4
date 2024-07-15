@@ -47,7 +47,7 @@
         $('.like-button').click(function() {
             var answerId = $(this).data('id');
             $.ajax({
-                url: '/like/' + answerId + '/',
+                url: '/like1/' + answerId + '/',
                 success: function() {
                     location.reload(); // Recargar la página
                 }
@@ -57,7 +57,7 @@
         $('.dislike-button').click(function() {
             var answerId = $(this).data('id');
             $.ajax({
-                url: '/dislike/' + answerId + '/',
+                url: '/dislike1/' + answerId + '/',
                 success: function() {
                     location.reload(); // Recargar la página
                 }
