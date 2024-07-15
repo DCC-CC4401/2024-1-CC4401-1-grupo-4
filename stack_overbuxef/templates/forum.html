@@ -55,6 +55,18 @@
         </div>
     </nav>   
     
+
+    <style>
+        .margins {
+            margin-left: 40px; /* Ajusta el valor según tus necesidades */
+            margin-right: 40px; /* Ajusta el valor según tus necesidades */
+        }
+
+        .selected {
+            color: #dc3545; 
+            font-weight: bold;
+        }
+    </style>
     
     <header class="margins" style="margin-bottom:1cm;">
         <div>
@@ -92,12 +104,9 @@
             </div>
             <div>
                 <p>
-                    {% if consulta.votar >= 0 %}
-                        <i class="fa fa-thumbs-up"></i>
-                    {% else %}
-                        <i class="fa fa-thumbs-down"></i>
-                    {% endif %}
-                    {{ consulta.votar }}
+                    <i class="fa fa-arrow-up like-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
+                    <span id="votar-{{ consulta.id }}">{{ consulta.votar }}</span>
+                    <i class="fa fa-arrow-down dislike-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
                 </p>
             </div>
             <div style="display: flex; justify-content: flex-end">
@@ -201,6 +210,32 @@
 				}
 			});
 		});
+
+        // Dar like
+        $('.like-button').click(function(){
+            var consultId = $(this).data('id');
+            $.ajax({
+                url: '/like/' + consultId + '/',
+                success: function(data) {
+                    $('#votar-' + consultId).text(data.votar);
+                    $('.like-button[data-id="' + consultId + '"]').toggleClass('selected');
+                    $('.dislike-button[data-id="' + consultId + '"]').removeClass('selected'); // Elimina el estado de dislike
+                }
+            });
+        });
+
+        // Dar dislike
+        $('.dislike-button').click(function(){
+            var consultId = $(this).data('id');
+            $.ajax({
+                url: '/dislike/' + consultId + '/',
+                success: function(data) {
+                    $('#votar-' + consultId).text(data.votar);
+                    $('.dislike-button[data-id="' + consultId + '"]').toggleClass('selected');
+                    $('.like-button[data-id="' + consultId + '"]').removeClass('selected'); // Elimina el estado de like
+                }
+            });
+        });
     });
     </script>
 </body>
