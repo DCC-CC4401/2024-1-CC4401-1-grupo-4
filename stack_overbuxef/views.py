@@ -233,3 +233,37 @@ def deleteReply(request, reply_id):
 		respuesta = Respuesta.objects.get(id=reply_id)
 		respuesta.delete()
 		return redirect('/forum')
+	
+@login_required
+def like_consulta(request, id):
+    consulta = get_object_or_404(Consulta, id=id)
+    
+    if request.user in consulta.users_liked.all():
+        consulta.users_liked.remove(request.user)
+        consulta.votar -= 1
+    else:
+        if request.user in consulta.users_disliked.all():
+            consulta.users_disliked.remove(request.user)
+            consulta.votar += 1  # Si estaba en dislike, incrementamos
+        consulta.users_liked.add(request.user)
+        consulta.votar += 1
+    
+    consulta.save()
+    return JsonResponse({'votar': consulta.votar})
+
+@login_required
+def dislike_consulta(request, id):
+    consulta = get_object_or_404(Consulta, id=id)
+    
+    if request.user in consulta.users_disliked.all():
+        consulta.users_disliked.remove(request.user)
+        consulta.votar += 1
+    else:
+        if request.user in consulta.users_liked.all():
+            consulta.users_liked.remove(request.user)
+            consulta.votar -= 1  # Si estaba en like, decrementamos
+        consulta.users_disliked.add(request.user)
+        consulta.votar -= 1
+    
+    consulta.save()
+    return JsonResponse({'votar': consulta.votar})
