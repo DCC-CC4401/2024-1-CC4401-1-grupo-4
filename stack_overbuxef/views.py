@@ -40,7 +40,7 @@ def forum(request):
 	if query: # Si hay algo ingresado en el buscador
 		consultas = Consulta.objects.filter(titulo__icontains=query) # Filtra las consultas por el título de estas
 	else: # Si no
-		consultas = Consulta.objects.all() # Se devuelven todas las consultas
+		consultas = Consulta.objects.order_by('-fecha_creacion') # Se devuelven todas las consultas ordenadas por fecha de creación en orden descendiente
 
 	paginator = Paginator(consultas, 10)  # Muestra 10 consultas por página
 
