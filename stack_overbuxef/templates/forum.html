@@ -169,7 +169,7 @@
             });
         });
 
-        // Modal para respondeR
+        // Modal para responder
         $('.answer-consult').click(function(){
             var consultId = $(this).data('id');
             $.ajax({
@@ -179,6 +179,10 @@
                     $('#makeAnswerModal').modal('show'); // Mostrar el modal después de cargar los datos
                 }
             });
+        });
+
+        $('#makeAnswerModal').on('shown.bs.modal', function() {
+            $(document).off('focusin.modal');
         });
 
 		$('.delete-comment').click(function() {
