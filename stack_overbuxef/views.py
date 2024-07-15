@@ -105,13 +105,15 @@ def profile(request, user_id=None):
 	tipos = {"PR": "Profesor", "ES": "Estudiante", "AD": "Administrador"}
 
 	if request.method == 'GET':
+		# print(user_id)
 		if user_id:
 			other = Usuario.objects.get(id=user_id)
+			print(other.foto)
 			user_info = {"id": other.id, "username": other.username, "tipo": tipos.get(other.tipo), "email": other.email, "foto": other.foto}
 		else:
 			user = request.user
 			user_info = {"id": user.id, "username": user.username, "tipo": tipos.get(user.tipo), "email": user.email, "foto": user.foto}
-		return render(request, "profile.html", {"user": user_info, "tipos": tipos, "error": ""})
+		return render(request, "profile.html", {"user_info": user_info, "tipos": tipos, "error": ""})
 
 	elif request.method == 'POST':
 		# Nueva información del usuario
@@ -137,10 +139,11 @@ def profile(request, user_id=None):
 				return render(request, "profile.html", {"tipos": tipos, "error": f"Elige un correo distinto al actual"})
 			user.email = correo
 		if tipo:
+			print(tipo)
 			user.tipo = tipo
 		if foto:
 			file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
-			user.foto = rf"media/{file_name}"
+			user.foto = file_name
 		user.save()
 
 		return HttpResponseRedirect('/forum') 
@@ -250,7 +253,7 @@ def deleteReply(request, reply_id):
 		respuesta = Respuesta.objects.get(id=reply_id)
 		respuesta.delete()
 		return redirect('/forum')
-	
+
 @login_required
 def like_consulta(request, id):
     consulta = get_object_or_404(Consulta, id=id)

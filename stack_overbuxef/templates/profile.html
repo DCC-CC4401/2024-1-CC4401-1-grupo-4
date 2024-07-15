@@ -46,12 +46,12 @@
 	<div class="margins">
 		<h1>Perfil</h1>
 		<div>
-			<img src="{{ user.foto }}" alt="profile picture">
-			<p><b>Nombre:</b> {{ user.username }}</p>
-			<p><b>Tipo de cuenta:</b> {{ user.tipo }}</p>
-			<p><b>Correo:</b> {{ user.email }}</p>
+			<img src="{{ user_info.foto.url }}" alt="profile picture">
+			<p><b>Nombre:</b> {{ user_info.username }}</p>
+			<p><b>Tipo de cuenta:</b> {{ user_info.tipo }}</p>
+			<p><b>Correo:</b> {{ user_info.email }}</p>
 		</div>
-		{% if user.id == request.user.id %}
+		{% if user_info.id == request.user.id %}
 		<div>
 			<h2>Editar información personal:</h2>
 			<form method="post" enctype="multipart/form-data">

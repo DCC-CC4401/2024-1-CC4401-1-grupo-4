@@ -135,6 +135,8 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'media')
 
 # Simplified static file serving.
 # https://warehouse.python.org/project/whitenoise/
