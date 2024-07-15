@@ -24,7 +24,9 @@ def publish_message(request):
             consulta = form.save(commit= False)
             consulta.creador_id = request.user.id  #Se asigna el creador de la consulta como el usuario que está logueado
             consulta.save() #Se guarda la consulta en la base de datos
-
+            if (request.FILES.get('multimedia')): # Si se subió una foto
+                file_name = default_storage.save(rf"fotos_consultas/{consulta.multimedia}", request.FILES.get('multimedia')) # Se guarda la multimedia en la carpeta correspondiente
+                consulta.multimedia = rf"media/{file_name}" # Se guarda la multimedia en la consulta
             # Guardar los tags seleccionados en la tabla de relación Consulta_tag
             tags = form.cleaned_data.get('tag')
             for tag in tags:
