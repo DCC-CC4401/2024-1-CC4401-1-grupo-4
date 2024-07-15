@@ -95,12 +95,18 @@ def login_user(request):
 
 
 @login_required
-def profile(request):
+def profile(request, user_id=None):
 	# Diccionario para renderizar adecuadamente el tipo de cuenta en la página
 	tipos = {"PR": "Profesor", "ES": "Estudiante", "AD": "Administrador"}
 
 	if request.method == 'GET':
-		return render(request, "profile.html", {"tipos": tipos, "error": ""})
+		if user_id:
+			other = Usuario.objects.get(id=user_id)
+			user_info = {"id": other.id, "username": other.username, "tipo": tipos.get(other.tipo), "email": other.email, "foto": other.foto}
+		else:
+			user = request.user
+			user_info = {"id": user.id, "username": user.username, "tipo": tipos.get(user.tipo), "email": user.email, "foto": user.foto}
+		return render(request, "profile.html", {"user": user_info, "tipos": tipos, "error": ""})
 
 	elif request.method == 'POST':
 		# Nueva información del usuario
@@ -134,7 +140,7 @@ def profile(request):
 
 		return HttpResponseRedirect('/forum') 
 
-  
+
 def modalAnswers(request,consult_id):
 	consult = get_object_or_404(Consulta, id=consult_id)
 	answers = Respuesta.objects.filter(consulta=consult).order_by('votar')
@@ -142,6 +148,7 @@ def modalAnswers(request,consult_id):
 	page_number = request.GET.get('page')
 	page_obj = paginator.get_page(page_number)
 	return render(request, 'answers.html', {'page_obj': page_obj, 'consult': consult})
+
 
 @login_required(login_url='/')
 def makeModalAnswer(request, consult_id):

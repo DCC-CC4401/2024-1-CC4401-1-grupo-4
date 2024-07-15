@@ -76,7 +76,7 @@
                 {% if consulta.anonimo %}
                     <a>Anónimo</a>
                 {% else %}
-                    <a href="#">{{ consulta.creador.username }}</a>
+                    <a href="{% url 'other_profile' consulta.creador.id %}">{{ consulta.creador.username }}</a>
                 {% endif %}
             </div>
             <div>
