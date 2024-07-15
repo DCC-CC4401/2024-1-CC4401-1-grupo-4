@@ -98,17 +98,26 @@
         {% for consulta in page_obj %}
         <div>
             <div>
-                <i class="fa fa-user-circle center"></i>
-                {% if consulta.anonimo %}
-                    <a>Anónimo</a>
+				{% if consulta.anonimo %}
+					<i class="fa fa-user-secret"></i>
+					<a>Anónimo</a>
                 {% else %}
+					{% if consulta.creador.tipo == "ES" %}
+					<i class="fa fa-user-circle center"></i>
+					{% elif consulta.creador.tipo == "PR" %}
+					<i class="fa fa-graduation-cap"></i>
+					{% else %}
+					<i class="fa fa-drivers-license"></i>
+					{% endif %}
                     <a href="{% url 'other_profile' consulta.creador.id %}">{{ consulta.creador.username }}</a>
                 {% endif %}
             </div>
             <div>
                 <h4><a>{{ consulta.titulo }}</a></h4>
                 <p>{{ consulta.mensaje|safe }}</p>
-				<img src="media/fotos_consultas/{{ consulta.multimedia }}" alt="">
+				{% if consulta.multimedia %}
+					<img src="media/fotos_consultas/{{ consulta.multimedia }}" alt="foto de consulta">
+				{% endif %}
             </div>
             <div>
                 <p>
