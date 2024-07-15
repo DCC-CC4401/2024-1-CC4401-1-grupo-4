@@ -7,13 +7,14 @@ from ckeditor.widgets import CKEditorWidget
 class AnswerForm(forms.ModelForm):
 	class Meta:
 		model = Respuesta
-		fields = ['mensaje', 'multimedia']
+		fields = ['mensaje', 'multimedia', 'anonimo']
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 
 		# Modificar widgets para personalizar la apariencia
 		self.fields['mensaje'] = forms.CharField(widget=CKEditorWidget(config_name='default'))
+		self.fields['anonimo'] = forms.BooleanField(label='Publicación anónima', required=False)
 
 #Clase formulario para la creación de una consulta
 class ConsultaForm(forms.ModelForm):

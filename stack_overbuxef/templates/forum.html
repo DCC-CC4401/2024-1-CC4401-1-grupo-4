@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Forum</title>
+    <title>Foro</title>
 	{% load static %}
 	<link rel="shortcut icon" type="image/png" href="{% static 'stack_overbuxef/images/stackoverbuxef_logo.png' %}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -24,6 +24,12 @@
             margin-left: 80px; /* Ajusta el valor según tus necesidades */
             margin-right: 80px; /* Ajusta el valor según tus necesidades */
         }
+		.pagination {
+			margin-bottom: 20px;
+		}
+		img {
+			max-width: 20%;
+		}
     </style>
 </head>
 <body>
@@ -102,6 +108,7 @@
             <div>
                 <h4><a>{{ consulta.titulo }}</a></h4>
                 <p>{{ consulta.mensaje|safe }}</p>
+				<img src="media/fotos_consultas/{{ consulta.multimedia }}" alt="">
             </div>
             <div>
                 <p>

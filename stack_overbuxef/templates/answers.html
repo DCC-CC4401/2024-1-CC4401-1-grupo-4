@@ -13,8 +13,13 @@
         {% for answer in page_obj %}
         <div>
             <i class="fa fa-user-circle center"></i>
-            <a href="#">{{ answer.creador.username }}</a>
+			{% if answer.anonimo %}
+				<a>Anónimo</a>
+			{% else %}
+				<a href="{% url 'other_profile' answer.creador.id %}">{{ answer.creador.username }}</a>
+			{% endif %}
             <p>{{ answer.mensaje|safe}}</p>
+			<img src="{{ answer.multimedia }}" alt="foto de respuesta">
             <p>
                 {% if consulta.votar >= 0 %}
                     <i class="fa fa-thumbs-up"></i>
@@ -25,10 +30,10 @@
                 <button class="dislike-button" data-id="{{ answer.id }}"><i class="fa fa-thumbs-down"></i> No me gusta</button>
                 {{ answer.votar }}
             </p>
+            <small>Publicada el {{answer.fecha_creacion}}</small><br>
 			{% if request.user.tipo == 'AD' %}
-				<button class="delete-reply" data-id="{{ answer.id }}"><i class="fa fa-trash"></i> Borrar</button><br>
+			<button class="delete-comment btn btn-danger shadow mb-2" data-id="{{ consulta.id }}"><i class="fa fa-trash"></i> Borrar</button>
 			{% endif %}
-            <small>Publicada el {{answer.fecha_creacion}}</small>
         </div>
         {% endfor %}
     </div>

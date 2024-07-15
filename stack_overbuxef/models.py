@@ -67,6 +67,7 @@ class Respuesta(models.Model):
     consulta=models.ForeignKey(Consulta,null=False,blank=False,on_delete=models.CASCADE)
     multimedia=models.FileField(storage=fsMedia,blank=True, null=True)
     votar=models.IntegerField(default=0)
+    anonimo=models.BooleanField(null=False, default=0)
 
 
 #Esta clase se usara para crear la tabla Consulta_respuesta que crea la relación entre las tablas Consulta y Respuesta
