@@ -15,9 +15,12 @@
 		margin-right: 80px; 
 	}
 	img {
-		max-width: 50%;
+		max-width: 10em;
 	}
 	#pic {
+		width: 10em;
+		height: 10em;
+		overflow: hidden;
 		margin-bottom: 12px;
 		border-radius: 50%;
 		border: 2px solid black;
@@ -52,7 +55,7 @@
 		</button>
 	</a>
 
-	<div class="margins d-flex justify-content-center">
+	<div class="margins d-flex justify-content-around">
 		<div>
 			<h1>Perfil</h1>
 			<img src="{{ user_info.foto.url }}" alt="profile picture" id="pic">

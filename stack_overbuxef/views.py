@@ -73,7 +73,7 @@ def register_user(request):
 			foto = request.FILES.get('foto')
 			if foto:
 				file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
-				Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=rf"media/{file_name}")
+				Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=file_name)
 			else:
 				Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo)
 
@@ -105,7 +105,6 @@ def profile(request, user_id=None):
 	tipos = {"PR": "Profesor", "ES": "Estudiante", "AD": "Administrador"}
 
 	if request.method == 'GET':
-		# print(user_id)
 		if user_id:
 			other = Usuario.objects.get(id=user_id)
 			user_info = {"id": other.id, "username": other.username, "tipo": tipos.get(other.tipo), "email": other.email, "foto": other.foto}
