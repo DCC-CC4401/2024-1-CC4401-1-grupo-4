@@ -153,7 +153,7 @@ def modalAnswers(request,consult_id):
 @login_required(login_url='/')
 def makeModalAnswer(request, consult_id):
 	if request.method == 'GET':
-		form = AnswerForm
+		form = AnswerForm(request.POST, request.FILES)
 		return render(request, 'publishAnswer.html', {'form': form, 'consult_id': consult_id})
 
 	elif request.method == 'POST':
@@ -162,6 +162,9 @@ def makeModalAnswer(request, consult_id):
 			respuesta = form.save(commit=False)
 			respuesta.creador = request.user  # Asignar el usuario logueado
 			respuesta.consulta = get_object_or_404(Consulta, id=consult_id)  # Obtener la consulta correspondiente
+			if (request.FILES.get('multimedia')): # Si se subió una foto
+				file_name = default_storage.save(rf"fotos_respuestas/{request.FILES.get('multimedia')}", request.FILES.get('multimedia')) # Se guarda la multimedia en la carpeta correspondiente
+				respuesta.multimedia = rf"media/{file_name}" # Se guarda la multimedia en la consulta
 			respuesta.save()
 			return redirect('forum')
 		else:
