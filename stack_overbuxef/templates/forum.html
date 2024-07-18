@@ -125,9 +125,9 @@
             </div>
             <div>
                 <p>
-                    <i class="fa fa-arrow-up like-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
-                    <span id="votar-{{ consulta.id }}">{{ consulta.votar }}</span>
-                    <i class="fa fa-arrow-down dislike-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
+                    <i class="fa fa-arrow-up btn btn-sm btn-outline-danger shadow like-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
+                    <span id="votar-{{ consulta.id }}">{% if consulta.votar > 0 %}+{% endif %}{{ consulta.votar }}</span>
+                    <i class="fa fa-arrow-down btn btn-sm btn-outline-danger shadow dislike-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
                 </p>
             </div>
 			{% for tag, value in tags.items %}
@@ -247,7 +247,8 @@
             $.ajax({
                 url: '/like/' + consultId + '/',
                 success: function(data) {
-                    $('#votar-' + consultId).text(data.votar);
+					let plus = (data.votar > 0) ? "+" : ""
+                    $('#votar-' + consultId).text(plus + data.votar);
                     $('.like-button[data-id="' + consultId + '"]').toggleClass('selected');
                     $('.dislike-button[data-id="' + consultId + '"]').removeClass('selected'); // Elimina el estado de dislike
                 }

@@ -31,16 +31,12 @@
 			{% if answer.multimedia %}
 				<img src="{{ answer.multimedia }}" alt="foto de respuesta">
 			{% endif %}
-            <p>
-                {% if consulta.votar >= 0 %}
-                    <i class="fa fa-thumbs-up"></i>
-                {% else %}
-                    <i class="fa fa-thumbs-down"></i>
-                {% endif %}
-                <button class="like-button" data-id="{{ answer.id }}"><i class="fa fa-thumbs-up"></i> Me gusta</button>
-                <button class="dislike-button" data-id="{{ answer.id }}"><i class="fa fa-thumbs-down"></i> No me gusta</button>
-                {{ answer.votar }}
-            </p>
+            <div>
+                <button class="btn btn-sm btn-outline-danger shadow like-button" data-id="{{ answer.id }}"><i class="fa fa-arrow-up"></i></button>
+                {% if answer.votar > 0 %}+{% endif %}{{ answer.votar }}
+                <button class="btn btn-sm btn-outline-danger shadow dislike-button" data-id="{{ answer.id }}"><i class="fa fa-arrow-down"></i></button>
+			</div>
+			<br>
             <small>Publicada el {{answer.fecha_creacion}}</small><br>
 			{% if request.user.tipo == 'AD' %}
 			<button class="delete-reply btn btn-danger shadow mb-2" data-id="{{ answer.id }}"><i class="fa fa-trash"></i> Borrar</button>
