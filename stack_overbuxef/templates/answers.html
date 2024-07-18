@@ -33,7 +33,7 @@
 			{% endif %}
             <div>
                 <button class="btn btn-sm btn-outline-danger shadow like-button" data-id="{{ answer.id }}"><i class="fa fa-arrow-up"></i></button>
-                {% if answer.votar > 0 %}+{% endif %}{{ answer.votar }}
+                <span id="votar-{{ answer.id }}">{% if answer.votar > 0 %}+{% endif %}{{ answer.votar }}</span>
                 <button class="btn btn-sm btn-outline-danger shadow dislike-button" data-id="{{ answer.id }}"><i class="fa fa-arrow-down"></i></button>
 			</div>
 			<br>
@@ -60,18 +60,23 @@
             var answerId = $(this).data('id');
             $.ajax({
                 url: '/like1/' + answerId + '/',
-                success: function() {
-                    location.reload(); // Recargar la página
+                success: function(data) {
+                    let plus = (data.votar > 0) ? "+" : ""
+                    $('#votar-' +answerId).text(plus + data.votar);
+                    $('.like-button[data-id="' + answerId + '"]').toggleClass('selected');
+                    $('.dislike-button[data-id="' + answerId + '"]').removeClass('selected'); // Elimina el estado de dislike
                 }
             });
         });
-
         $('.dislike-button').click(function() {
             var answerId = $(this).data('id');
             $.ajax({
                 url: '/dislike1/' + answerId + '/',
-                success: function() {
-                    location.reload(); // Recargar la página
+                success: function(data) {
+                    let plus = (data.votar > 0) ? "+" : ""
+                    $('#votar-' + answerId).text(data.votar);
+                    $('.dislike-button[data-id="' + answerId + '"]').toggleClass('selected');
+                    $('.like-button[data-id="' + answerId + '"]').removeClass('selected');
                 }
             });
         });
