@@ -25,6 +25,7 @@ Teniendo los paquetes instalados finalmente es posible visualizar la página eje
 ```sh
 python .\manage.py makemigrations stack_overbuxef
 python .\manage.py migrate
+python .\manage.py loaddata initial_tags.json
 python .\manage.py runserver
 ```
 

@@ -40,16 +40,23 @@ def forum(request):
 	if query: # Si hay algo ingresado en el buscador
 		consultas = Consulta.objects.filter(titulo__icontains=query) # Filtra las consultas por el título de estas
 	else: # Si no
-		consultas = Consulta.objects.all() # Se devuelven todas las consultas
+		consultas = Consulta.objects.order_by('-fecha_creacion') # Se devuelven todas las consultas ordenadas por fecha de creación en orden descendiente
 
 	paginator = Paginator(consultas, 10)  # Muestra 10 consultas por página
 
 	page_number = request.GET.get('page') # Obtengo el número de la página que se esta mostrando
 	page_obj = paginator.get_page(page_number) # Obtengo el objeto página
+	page_tags = {}
+
+	for consulta in page_obj:
+		tag_ids = Consulta_tag.objects.filter(consulta_id=consulta.id).values_list('tag_id', flat=True)
+		pre_list = Tag.objects.filter(id__in=tag_ids).values_list('nombre')
+		page_tags[consulta.id] = [elem[0] for elem in pre_list]
 
 	context = { # Se crea un diccionario el cual se le va entregar al html para obtener las referencias necesarias
 		'page_obj': page_obj, # Objeto página
 		'query': query, # Lo ingresado en el campo de la búsqueda. Esto es necesario para mantenerlo al cambiar de página
+		'tags': page_tags,
 	}
 	return render(request, 'forum.html', context) # Se muestra el template cuyo contexto es context
 
@@ -73,7 +80,7 @@ def register_user(request):
 			foto = request.FILES.get('foto')
 			if foto:
 				file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
-				Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=rf"media/{file_name}")
+				Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo, foto=file_name)
 			else:
 				Usuario.objects.create_user(username=nombre, email=mail, password=contrasenha, tipo=tipo)
 
@@ -111,7 +118,7 @@ def profile(request, user_id=None):
 		else:
 			user = request.user
 			user_info = {"id": user.id, "username": user.username, "tipo": tipos.get(user.tipo), "email": user.email, "foto": user.foto}
-		return render(request, "profile.html", {"user": user_info, "tipos": tipos, "error": ""})
+		return render(request, "profile.html", {"user_info": user_info, "tipos": tipos, "error": ""})
 
 	elif request.method == 'POST':
 		# Nueva información del usuario
@@ -140,7 +147,7 @@ def profile(request, user_id=None):
 			user.tipo = tipo
 		if foto:
 			file_name = default_storage.save(rf"fotos_usuarios/{foto.name}", foto)
-			user.foto = rf"media/{file_name}"
+			user.foto = file_name
 		user.save()
 
 		return HttpResponseRedirect('/forum') 
@@ -148,7 +155,7 @@ def profile(request, user_id=None):
 
 def modalAnswers(request,consult_id):
 	consult = get_object_or_404(Consulta, id=consult_id)
-	answers = Respuesta.objects.filter(consulta=consult).order_by('votar')
+	answers = Respuesta.objects.filter(consulta=consult).order_by('-votar')
 	paginator = Paginator(answers, 10)
 	page_number = request.GET.get('page')
 	page_obj = paginator.get_page(page_number)
@@ -158,7 +165,7 @@ def modalAnswers(request,consult_id):
 @login_required(login_url='/')
 def makeModalAnswer(request, consult_id):
 	if request.method == 'GET':
-		form = AnswerForm(request.POST, request.FILES)
+		form = AnswerForm()
 		return render(request, 'publishAnswer.html', {'form': form, 'consult_id': consult_id})
 
 	elif request.method == 'POST':
@@ -250,6 +257,8 @@ def deleteReply(request, reply_id):
 		respuesta = Respuesta.objects.get(id=reply_id)
 		respuesta.delete()
 		return redirect('/forum')
+
+
 @login_required
 def like_answer(request, id):
 	respuesta=get_object_or_404(Respuesta, id=id) # Se obtiene la respuesta con el id proporcionado o devolver un error 404 si no existe 
@@ -267,6 +276,7 @@ def like_answer(request, id):
 	return JsonResponse({'votar': respuesta.votar}) #Se devuelve una respuesta json con el nuevo contador
 
 
+
 @login_required
 def dislike_answer(request,id):
 	respuesta=get_object_or_404(Respuesta,id=id) # Se obtiene la respuesta con el id proporcionado o devolver un error 404 si no existe 
@@ -281,7 +291,15 @@ def dislike_answer(request,id):
 		respuesta.votar-=1 #Se resta un voto 
 	respuesta.save() #Se guarda en la base de datos la respuesta
 	return JsonResponse({'votar': respuesta.votar}) #Se devuelve una respuesta json con el nuevo contador
-	
+def dislike_answer(request, answer_id):
+    # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
+    answer = get_object_or_404(Respuesta, id=answer_id)
+    # Decrementa el contador de votos de la respuesta en 1
+    answer.votar -= 1
+    # Guarda los cambios en la base de datos
+    answer.save()
+    # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
+    return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
 @login_required
 def like_consulta(request, id):
     consulta = get_object_or_404(Consulta, id=id) # Se obtiene la consulta con el id proporcionado o devolver un error 404 si no existe
@@ -298,6 +316,7 @@ def like_consulta(request, id):
     
     consulta.save() #Se guarda los cambios hechos
     return JsonResponse({'votar': consulta.votar}) #Se devuelve una respuesta json con el nuevo contador
+
 
 @login_required
 def dislike_consulta(request, id):

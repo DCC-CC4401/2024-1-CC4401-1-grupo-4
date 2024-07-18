@@ -12,8 +12,21 @@
     <div>
         {% for answer in page_obj %}
         <div>
-            <i class="fa fa-user-circle center"></i>
-            <a href="#">{{ answer.creador.username }}</a>
+			<hr style="border: 1px solid rgba(0, 0, 0, 0.1);">
+			{% if answer.anonimo %}
+				<i class="fa fa-user-secret"></i>
+				<a>Anónimo</a>
+			{% else %}
+				{% if answer.creador.tipo == "ES" %}
+				<i class="fa fa-user-circle center"></i>
+				{% elif answer.creador.tipo == "PR" %}
+				<i class="fa fa-graduation-cap"></i>
+				{% else %}
+				<i class="fa fa-drivers-license"></i>
+				{% endif %}
+				<a href="{% url 'other_profile' answer.creador.id %}">{{ answer.creador.username }}</a>
+			{% endif %}
+
             <p>{{ answer.mensaje|safe}}</p>
 			{% if answer.multimedia %}
 				<img src="{{ answer.multimedia }}" alt="foto de respuesta">
@@ -26,9 +39,8 @@
 			<br>
             <small>Publicada el {{answer.fecha_creacion}}</small><br>
 			{% if request.user.tipo == 'AD' %}
-				<button class="delete-reply" data-id="{{ answer.id }}"><i class="fa fa-trash"></i> Borrar</button><br>
+			<button class="delete-reply btn btn-danger shadow mb-2" data-id="{{ answer.id }}"><i class="fa fa-trash"></i> Borrar</button>
 			{% endif %}
-            <small>Publicada el {{answer.fecha_creacion}}</small>
         </div>
         {% endfor %}
     </div>

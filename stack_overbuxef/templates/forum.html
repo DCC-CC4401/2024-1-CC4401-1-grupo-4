@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Forum</title>
+    <title>Foro</title>
+	{% load static %}
+	<link rel="shortcut icon" type="image/png" href="{% static 'stack_overbuxef/images/stackoverbuxef_logo.png' %}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -22,12 +24,21 @@
             margin-left: 80px; /* Ajusta el valor según tus necesidades */
             margin-right: 80px; /* Ajusta el valor según tus necesidades */
         }
+		.pagination {
+			margin-bottom: 20px;
+		}
+		img {
+			max-width: 15%;
+		}
+		#user-page:hover > #user-svg {
+			transition: 0.4s;
+			fill: black;
+		}
     </style>
 </head>
 <body>
     <header>
     <!-- Barra de navegación -->
-    {% load static %}
     <nav class="navbar shadow" style="background-color: #ed7d7d; margin-bottom:0.5cm;">
         <div class="container-fluid">
             <!-- Logo a la izquierda -->
@@ -40,8 +51,8 @@
             <div class="d-flex flex-grow-1"></div>
             
             <!-- Botón del icono del usuario a la derecha -->
-            <button class="btn btn-outline-light d-flex align-items-center me-2" type="button" onclick="window.location.href='profile'" style='margin-right:16px'>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ffffff" class="bi bi-person-circle" viewBox="0 0 16 16">
+            <button class="btn btn-outline-light d-flex align-items-center me-2" type="button" onclick="window.location.href='profile'" id="user-page" style='margin-right:16px'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#ffffff" class="bi bi-person-circle" viewBox="0 0 16 16" id="user-svg">
                     <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
                     <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
                 </svg>
@@ -78,9 +89,9 @@
                 <input type="text" class="form-control shadow" name="q" placeholder="Busque una pregunta" value="{{ query|default_if_none:'' }}">
                 <button type="submit" class="btn btn-danger shadow" style="width: 5%;"><i class="fa fa-search"></i></button>
             </form><br>
-            <a href="{% url 'message' %}"><button class="btn btn-danger shadow mb-1">Publicar</button></a>
+            <a href="{% url 'message' %}"><button class="btn btn-danger shadow mb-1">Publicar mensaje</button></a>
             {% if request.user.tipo == 'AD' %}
-                <a href="{% url 'tags' %}"><button class="btn btn-danger shadow mb-1">Crear Tags</button></a>
+                <a href="{% url 'tags' %}"><button class="btn btn-danger shadow mb-1">Administrar Tags</button></a>
             {% endif %}
         </div>
     </header>   
@@ -91,24 +102,43 @@
         {% for consulta in page_obj %}
         <div>
             <div>
-                <i class="fa fa-user-circle center"></i>
-                {% if consulta.anonimo %}
-                    <a>Anónimo</a>
+				{% if consulta.anonimo %}
+					<i class="fa fa-user-secret"></i>
+					<a>Anónimo</a>
                 {% else %}
+					{% if consulta.creador.tipo == "ES" %}
+					<i class="fa fa-user-circle center"></i>
+					{% elif consulta.creador.tipo == "PR" %}
+					<i class="fa fa-graduation-cap"></i>
+					{% else %}
+					<i class="fa fa-drivers-license"></i>
+					{% endif %}
                     <a href="{% url 'other_profile' consulta.creador.id %}">{{ consulta.creador.username }}</a>
                 {% endif %}
             </div>
             <div>
                 <h4><a>{{ consulta.titulo }}</a></h4>
                 <p>{{ consulta.mensaje|safe }}</p>
+				{% if consulta.multimedia %}
+					<img src="media/fotos_consultas/{{ consulta.multimedia }}" alt="foto de consulta">
+				{% endif %}
             </div>
             <div>
                 <p>
-                    <i class="fa fa-arrow-up like-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
-                    <span id="votar-{{ consulta.id }}">{{ consulta.votar }}</span>
-                    <i class="fa fa-arrow-down dislike-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
+                    <i class="fa fa-arrow-up btn btn-sm btn-outline-danger shadow like-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
+                    <span id="votar-{{ consulta.id }}">{% if consulta.votar > 0 %}+{% endif %}{{ consulta.votar }}</span>
+                    <i class="fa fa-arrow-down btn btn-sm btn-outline-danger shadow dislike-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
                 </p>
             </div>
+			{% for tag, value in tags.items %}
+			{% if tag == consulta.id %}
+			<div class="d-flex flex-nowrap">
+			{% for elem in value %}
+					<span class="ml-1 badge badge-pill badge-danger">{{ elem }}</span>
+				{% endfor %}
+			</div>
+			{% endif %}
+			{% endfor %}
             <div style="display: flex; justify-content: flex-end">
                 <small>Publicada el {{ consulta.fecha_creacion }}</small>
             </div>
@@ -217,7 +247,8 @@
             $.ajax({
                 url: '/like/' + consultId + '/',
                 success: function(data) {
-                    $('#votar-' + consultId).text(data.votar);
+					let plus = (data.votar > 0) ? "+" : ""
+                    $('#votar-' + consultId).text(plus + data.votar);
                     $('.like-button[data-id="' + consultId + '"]').toggleClass('selected');
                     $('.dislike-button[data-id="' + consultId + '"]').removeClass('selected'); // Elimina el estado de dislike
                 }
