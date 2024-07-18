@@ -15,16 +15,16 @@
             <i class="fa fa-user-circle center"></i>
             <a href="#">{{ answer.creador.username }}</a>
             <p>{{ answer.mensaje|safe}}</p>
-            <p>
-                {% if consulta.votar >= 0 %}
-                    <i class="fa fa-thumbs-up"></i>
-                {% else %}
-                    <i class="fa fa-thumbs-down"></i>
-                {% endif %}
-                <button class="like-button" data-id="{{ answer.id }}"><i class="fa fa-thumbs-up"></i> Me gusta</button>
-                <button class="dislike-button" data-id="{{ answer.id }}"><i class="fa fa-thumbs-down"></i> No me gusta</button>
-                {{ answer.votar }}
-            </p>
+			{% if answer.multimedia %}
+				<img src="{{ answer.multimedia }}" alt="foto de respuesta">
+			{% endif %}
+            <div>
+                <button class="btn btn-sm btn-outline-danger shadow like-button" data-id="{{ answer.id }}"><i class="fa fa-arrow-up"></i></button>
+                <span id="votar-{{ answer.id }}">{% if answer.votar > 0 %}+{% endif %}{{ answer.votar }}</span>
+                <button class="btn btn-sm btn-outline-danger shadow dislike-button" data-id="{{ answer.id }}"><i class="fa fa-arrow-down"></i></button>
+			</div>
+			<br>
+            <small>Publicada el {{answer.fecha_creacion}}</small><br>
 			{% if request.user.tipo == 'AD' %}
 				<button class="delete-reply" data-id="{{ answer.id }}"><i class="fa fa-trash"></i> Borrar</button><br>
 			{% endif %}
@@ -48,18 +48,23 @@
             var answerId = $(this).data('id');
             $.ajax({
                 url: '/like1/' + answerId + '/',
-                success: function() {
-                    location.reload(); // Recargar la página
+                success: function(data) {
+                    let plus = (data.votar > 0) ? "+" : ""
+                    $('#votar-' +answerId).text(plus + data.votar);
+                    $('.like-button[data-id="' + answerId + '"]').toggleClass('selected');
+                    $('.dislike-button[data-id="' + answerId + '"]').removeClass('selected'); // Elimina el estado de dislike
                 }
             });
         });
-
         $('.dislike-button').click(function() {
             var answerId = $(this).data('id');
             $.ajax({
                 url: '/dislike1/' + answerId + '/',
-                success: function() {
-                    location.reload(); // Recargar la página
+                success: function(data) {
+                    let plus = (data.votar > 0) ? "+" : ""
+                    $('#votar-' + answerId).text(data.votar);
+                    $('.dislike-button[data-id="' + answerId + '"]').toggleClass('selected');
+                    $('.like-button[data-id="' + answerId + '"]').removeClass('selected');
                 }
             });
         });
