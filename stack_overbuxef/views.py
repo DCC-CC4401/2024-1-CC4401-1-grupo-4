@@ -58,7 +58,6 @@ def forum(request):
 		'query': query, # Lo ingresado en el campo de la búsqueda. Esto es necesario para mantenerlo al cambiar de página
 		'tags': page_tags,
 	}
-	print(page_tags.get(27))
 	return render(request, 'forum.html', context) # Se muestra el template cuyo contexto es context
 
 def register_user(request):
@@ -156,7 +155,7 @@ def profile(request, user_id=None):
 
 def modalAnswers(request,consult_id):
 	consult = get_object_or_404(Consulta, id=consult_id)
-	answers = Respuesta.objects.filter(consulta=consult).order_by('votar')
+	answers = Respuesta.objects.filter(consulta=consult).order_by('-votar')
 	paginator = Paginator(answers, 10)
 	page_number = request.GET.get('page')
 	page_obj = paginator.get_page(page_number)
@@ -166,7 +165,7 @@ def modalAnswers(request,consult_id):
 @login_required(login_url='/')
 def makeModalAnswer(request, consult_id):
 	if request.method == 'GET':
-		form = AnswerForm(request.POST, request.FILES)
+		form = AnswerForm()
 		return render(request, 'publishAnswer.html', {'form': form, 'consult_id': consult_id})
 
 	elif request.method == 'POST':
@@ -258,6 +257,8 @@ def deleteReply(request, reply_id):
 		respuesta = Respuesta.objects.get(id=reply_id)
 		respuesta.delete()
 		return redirect('/forum')
+
+
 @login_required
 def like_answer(request, answer_id):
     # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
@@ -269,6 +270,7 @@ def like_answer(request, answer_id):
     # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
     return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
 
+
 @login_required
 def dislike_answer(request, answer_id):
     # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
@@ -279,6 +281,7 @@ def dislike_answer(request, answer_id):
     answer.save()
     # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
     return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
+
 
 @login_required
 def like_consulta(request, id):
@@ -296,6 +299,7 @@ def like_consulta(request, id):
     
     consulta.save()
     return JsonResponse({'votar': consulta.votar})
+
 
 @login_required
 def dislike_consulta(request, id):
