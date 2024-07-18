@@ -46,11 +46,19 @@ def forum(request):
 
 	page_number = request.GET.get('page') # Obtengo el número de la página que se esta mostrando
 	page_obj = paginator.get_page(page_number) # Obtengo el objeto página
+	page_tags = {}
+
+	for consulta in page_obj:
+		tag_ids = Consulta_tag.objects.filter(consulta_id=consulta.id).values_list('tag_id', flat=True)
+		pre_list = Tag.objects.filter(id__in=tag_ids).values_list('nombre')
+		page_tags[consulta.id] = [elem[0] for elem in pre_list]
 
 	context = { # Se crea un diccionario el cual se le va entregar al html para obtener las referencias necesarias
 		'page_obj': page_obj, # Objeto página
 		'query': query, # Lo ingresado en el campo de la búsqueda. Esto es necesario para mantenerlo al cambiar de página
+		'tags': page_tags,
 	}
+	print(page_tags.get(27))
 	return render(request, 'forum.html', context) # Se muestra el template cuyo contexto es context
 
 def register_user(request):

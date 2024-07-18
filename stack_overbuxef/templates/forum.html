@@ -89,7 +89,7 @@
                 <input type="text" class="form-control shadow" name="q" placeholder="Busque una pregunta" value="{{ query|default_if_none:'' }}">
                 <button type="submit" class="btn btn-danger shadow" style="width: 5%;"><i class="fa fa-search"></i></button>
             </form><br>
-            <a href="{% url 'message' %}"><button class="btn btn-danger shadow mb-1">Publicar</button></a>
+            <a href="{% url 'message' %}"><button class="btn btn-danger shadow mb-1">Publicar mensaje</button></a>
             {% if request.user.tipo == 'AD' %}
                 <a href="{% url 'tags' %}"><button class="btn btn-danger shadow mb-1">Administrar Tags</button></a>
             {% endif %}
@@ -130,6 +130,15 @@
                     <i class="fa fa-arrow-down dislike-button" data-id="{{ consulta.id }}" style="cursor: pointer;"></i>
                 </p>
             </div>
+			{% for tag, value in tags.items %}
+			{% if tag == consulta.id %}
+			<div class="d-flex flex-nowrap">
+			{% for elem in value %}
+					<span class="ml-1 badge badge-pill badge-danger">{{ elem }}</span>
+				{% endfor %}
+			</div>
+			{% endif %}
+			{% endfor %}
             <div style="display: flex; justify-content: flex-end">
                 <small>Publicada el {{ consulta.fecha_creacion }}</small>
             </div>
