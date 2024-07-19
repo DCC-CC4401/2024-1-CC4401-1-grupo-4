@@ -260,18 +260,37 @@ def deleteReply(request, reply_id):
 
 
 @login_required
-def like_answer(request, answer_id):
-    # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
-    answer = get_object_or_404(Respuesta, id=answer_id)
-    # Incrementa el contador de votos de la respuesta en 1
-    answer.votar += 1
-    # Guarda los cambios en la base de datos
-    answer.save()
-    # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
-    return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
+def like_answer(request, id):
+	respuesta=get_object_or_404(Respuesta, id=id) # Se obtiene la respuesta con el id proporcionado o devolver un error 404 si no existe 
+	if request.user in respuesta.users_liked.all(): # Se verifica si el usuario ha dado un 'like' a la respuesta
+		respuesta.users_liked.remove(request.user) #Se elimina al usuario de la lista de 'disliked'
+		
+		respuesta.votar-=1 # Incrementar el contador de votos
+	else:
+		if request.user in respuesta.users_disliked.all(): # Si el usuario ha dado un 'dislike' previamente
+			respuesta.users_disliked.remove(request.user) # Se elimina al usuario de la lista de 'disliked'
+			respuesta.votar+=1 # Se incrementa el contador de votos
+		respuesta.users_liked.add(request.user) # Se agrega al usuario a la lista de 'liked'
+		respuesta.votar+=1 # Se incrementa el contador de votos
+	respuesta.save() # Se guardan los resultados en la tabla	
+	return JsonResponse({'votar': respuesta.votar}) #Se devuelve una respuesta json con el nuevo contador
+
 
 
 @login_required
+def dislike_answer(request,id):
+	respuesta=get_object_or_404(Respuesta,id=id) # Se obtiene la respuesta con el id proporcionado o devolver un error 404 si no existe 
+	if request.user in respuesta.users_disliked.all(): # Se verifica si el usuario ha dado un 'dislike' a la respuesta
+		respuesta.users_disliked.remove(request.user) # Se elimina al usuario de la lista de 'disliked'
+		respuesta.votar+=1 # Se incrementa el contador de votos
+	else:
+		if request.user in respuesta.users_liked.all(): # Si el usuario ha dado un 'like' previamente
+			respuesta.users_liked.remove(request.user) # Se elimina al usuario de la lista de 'liked'
+			respuesta.votar-=1 #Se resta uno a votar de answer
+		respuesta.users_disliked.add(request.user) # Se agrega al usuario a la lista de 'disliked'
+		respuesta.votar-=1 #Se resta un voto 
+	respuesta.save() #Se guarda en la base de datos la respuesta
+	return JsonResponse({'votar': respuesta.votar}) #Se devuelve una respuesta json con el nuevo contador
 def dislike_answer(request, answer_id):
     # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
     answer = get_object_or_404(Respuesta, id=answer_id)
@@ -281,39 +300,37 @@ def dislike_answer(request, answer_id):
     answer.save()
     # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
     return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
-
-
 @login_required
 def like_consulta(request, id):
-    consulta = get_object_or_404(Consulta, id=id)
+    consulta = get_object_or_404(Consulta, id=id) # Se obtiene la consulta con el id proporcionado o devolver un error 404 si no existe
     
-    if request.user in consulta.users_liked.all():
-        consulta.users_liked.remove(request.user)
-        consulta.votar -= 1
+    if request.user in consulta.users_liked.all():  # Se verifica si el usuario ha dado un 'like' a la consulta
+        consulta.users_liked.remove(request.user) #Se elimina al usuario de la lista de 'liked'
+        consulta.votar -= 1 # Incrementar el contador de votos
     else:
-        if request.user in consulta.users_disliked.all():
-            consulta.users_disliked.remove(request.user)
+        if request.user in consulta.users_disliked.all(): # Si el usuario ha dado un 'dislike' previamente
+            consulta.users_disliked.remove(request.user) # Se elimina al usuario de la lista de 'disliked'
             consulta.votar += 1  # Si estaba en dislike, incrementamos
-        consulta.users_liked.add(request.user)
-        consulta.votar += 1
+        consulta.users_liked.add(request.user)  # Se agrega al usuario a la lista de 'liked'
+        consulta.votar += 1 #Se incrementa
     
-    consulta.save()
-    return JsonResponse({'votar': consulta.votar})
+    consulta.save() #Se guarda los cambios hechos
+    return JsonResponse({'votar': consulta.votar}) #Se devuelve una respuesta json con el nuevo contador
 
 
 @login_required
 def dislike_consulta(request, id):
-    consulta = get_object_or_404(Consulta, id=id)
+    consulta = get_object_or_404(Consulta, id=id) # Se obtiene la consulta con el id proporcionado o devolver un error 404 si no existe
     
-    if request.user in consulta.users_disliked.all():
-        consulta.users_disliked.remove(request.user)
-        consulta.votar += 1
+    if request.user in consulta.users_disliked.all(): # Se verifica si el usuario ha dado un 'dislike' a la consulta
+        consulta.users_disliked.remove(request.user) #Se elimina al usuario de la lista de 'disliked'
+        consulta.votar += 1 #Se incrementa en uno
     else:
-        if request.user in consulta.users_liked.all():
-            consulta.users_liked.remove(request.user)
-            consulta.votar -= 1  # Si estaba en like, decrementamos
-        consulta.users_disliked.add(request.user)
-        consulta.votar -= 1
+        if request.user in consulta.users_liked.all(): # Si el usuario ha dado un 'like' previamente
+            consulta.users_liked.remove(request.user)  # Se elimina al usuario de la lista de 'liked'
+            consulta.votar -= 1  # Si estaba en like, se disminuye en uno votar
+        consulta.users_disliked.add(request.user) # Se agrega al usuario a la lista de 'disliked'
+        consulta.votar -= 1 #Se resta uno a votar
     
-    consulta.save()
-    return JsonResponse({'votar': consulta.votar})
+    consulta.save() #Se guardan los cambios hechos
+    return JsonResponse({'votar': consulta.votar}) #Se devuelve una respuesta json con el nuevo contador
