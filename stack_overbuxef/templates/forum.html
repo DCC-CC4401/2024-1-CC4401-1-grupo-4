@@ -261,7 +261,8 @@
             $.ajax({
                 url: '/dislike/' + consultId + '/',
                 success: function(data) {
-                    $('#votar-' + consultId).text(data.votar);
+					let plus = (data.votar > 0) ? "+" : ""
+                    $('#votar-' + consultId).text(plus + data.votar);
                     $('.dislike-button[data-id="' + consultId + '"]').toggleClass('selected');
                     $('.like-button[data-id="' + consultId + '"]').removeClass('selected'); // Elimina el estado de like
                 }
