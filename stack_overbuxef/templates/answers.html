@@ -74,7 +74,7 @@
                 url: '/dislike1/' + answerId + '/',
                 success: function(data) {
                     let plus = (data.votar > 0) ? "+" : ""
-                    $('#votar-' + answerId).text(data.votar);
+                    $('#votar-' + answerId).text(plus + data.votar);
                     $('.dislike-button[data-id="' + answerId + '"]').toggleClass('selected');
                     $('.like-button[data-id="' + answerId + '"]').removeClass('selected');
                 }

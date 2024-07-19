@@ -276,9 +276,8 @@ def like_answer(request, id):
 	return JsonResponse({'votar': respuesta.votar}) #Se devuelve una respuesta json con el nuevo contador
 
 
-
 @login_required
-def dislike_answer(request,id):
+def dislike_answer(request, id):
 	respuesta=get_object_or_404(Respuesta,id=id) # Se obtiene la respuesta con el id proporcionado o devolver un error 404 si no existe 
 	if request.user in respuesta.users_disliked.all(): # Se verifica si el usuario ha dado un 'dislike' a la respuesta
 		respuesta.users_disliked.remove(request.user) # Se elimina al usuario de la lista de 'disliked'
@@ -291,15 +290,8 @@ def dislike_answer(request,id):
 		respuesta.votar-=1 #Se resta un voto 
 	respuesta.save() #Se guarda en la base de datos la respuesta
 	return JsonResponse({'votar': respuesta.votar}) #Se devuelve una respuesta json con el nuevo contador
-def dislike_answer(request, answer_id):
-    # Obtiene la respuesta con el ID proporcionado, o devuelve un error 404 si no se encuentra
-    answer = get_object_or_404(Respuesta, id=answer_id)
-    # Decrementa el contador de votos de la respuesta en 1
-    answer.votar -= 1
-    # Guarda los cambios en la base de datos
-    answer.save()
-    # Devuelve una respuesta JSON indicando éxito y el nuevo conteo de votos
-    return JsonResponse({'status': 'success', 'new_vote_count': answer.votar})
+
+
 @login_required
 def like_consulta(request, id):
     consulta = get_object_or_404(Consulta, id=id) # Se obtiene la consulta con el id proporcionado o devolver un error 404 si no existe
