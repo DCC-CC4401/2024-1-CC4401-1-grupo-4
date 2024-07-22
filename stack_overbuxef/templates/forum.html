@@ -7,7 +7,9 @@
 	<link rel="shortcut icon" type="image/png" href="{% static 'stack_overbuxef/images/stackoverbuxef_logo.png' %}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
@@ -19,14 +21,23 @@
             }
         });
     </script>
+	<script type="text/javascript">
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
     <style>
-        .margins {
-            margin-left: 80px; /* Ajusta el valor según tus necesidades */
-            margin-right: 80px; /* Ajusta el valor según tus necesidades */
+		.margins {
+            margin-left: 40px; /* Ajusta el valor según tus necesidades */
+            margin-right: 40px; /* Ajusta el valor según tus necesidades */
         }
 		.pagination {
 			margin-bottom: 20px;
 		}
+		.select2-container {
+			max-width: 207px !important;
+            /* width: 100% !important; */
+        }
 		img {
 			max-width: 15%;
 		}
@@ -34,6 +45,10 @@
 			transition: 0.4s;
 			fill: black;
 		}
+		.selected {
+            color: #dc3545; 
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -46,7 +61,7 @@
                 <img src="{% static 'stack_overbuxef/images/stackoverbuxef_logo.png' %}" alt="Bootstrap" width="30" height="30" class="d-inline-block align-text-top">
                 <span style="color: white; font-weight: bold;">Stack Overbuxef</span>
             </a>
-    
+
             <!-- Espaciador central para empujar los otros elementos a los extremos -->
             <div class="d-flex flex-grow-1"></div>
             
@@ -64,21 +79,8 @@
                 <button class="btn btn-outline-light" type="button" onclick="window.location.href='logout'">Cerrar sesión</button>
             </form>
         </div>
-    </nav>   
-    
+    </nav>
 
-    <style>
-        .margins {
-            margin-left: 40px; /* Ajusta el valor según tus necesidades */
-            margin-right: 40px; /* Ajusta el valor según tus necesidades */
-        }
-
-        .selected {
-            color: #dc3545; 
-            font-weight: bold;
-        }
-    </style>
-    
     <header class="margins" style="margin-bottom:1cm;">
         <div>
             <h1>Foro</h1>
@@ -87,8 +89,13 @@
         <div>
             <form method="get" action="" class="form-inline">
                 <input type="text" class="form-control shadow" name="q" placeholder="Busque una pregunta" value="{{ query|default_if_none:'' }}">
-                <button type="submit" class="btn btn-danger shadow" style="width: 5%;"><i class="fa fa-search"></i></button>
-            </form><br>
+                <button type="submit" class="btn btn-danger shadow" style="min-width: 48px;"><i class="fa fa-search"></i></button>
+            </form>
+			<form method="get" action="" class="form-inline" style="margin-top: 10px;">
+				{% csrf_token %}
+				{{ form.as_p }}
+				<button type="submit" class="btn btn-danger shadow" style="min-width: 48px;"><i class="fa fa-search"></i></button>
+			</form>
             <a href="{% url 'message' %}"><button class="btn btn-danger shadow mb-1">Publicar mensaje</button></a>
             {% if request.user.tipo == 'AD' %}
                 <a href="{% url 'tags' %}"><button class="btn btn-danger shadow mb-1">Administrar Tags</button></a>
@@ -96,7 +103,6 @@
         </div>
     </header>   
 
-    
     <div class="margins">
         <hr>
         {% for consulta in page_obj %}
@@ -120,7 +126,7 @@
                 <h4><a>{{ consulta.titulo }}</a></h4>
                 <p>{{ consulta.mensaje|safe }}</p>
 				{% if consulta.multimedia %}
-					<img src="media/fotos_consultas/{{ consulta.multimedia }}" alt="foto de consulta">
+					<img src="media/fotos_consultas/{{ consulta.multimedia }}" alt="foto de consulta"><br><br>
 				{% endif %}
             </div>
             <div>

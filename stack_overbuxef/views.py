@@ -1,14 +1,12 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
-from .forms import ConsultaForm, AnswerForm
+from .forms import ConsultaForm, AnswerForm, TagForm
 from .models import Consulta, Usuario, Tag, Consulta_tag, Respuesta
 from django.core.paginator import Paginator
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 
@@ -36,29 +34,42 @@ def publish_message(request):
 
 @login_required(login_url='/')
 def forum(request):
-	query = request.GET.get('q', '') # Devuelve el término ingresado en el input de "Busqué una pregunta"
-	if query: # Si hay algo ingresado en el buscador
-		consultas = Consulta.objects.filter(titulo__icontains=query) # Filtra las consultas por el título de estas
-	else: # Si no
-		consultas = Consulta.objects.order_by('-fecha_creacion') # Se devuelven todas las consultas ordenadas por fecha de creación en orden descendiente
+	if request.method == 'GET':
+		query = request.GET.get('q', '') # Devuelve el término ingresado en el input de "Busqué una pregunta"
+		tag_ids = []
+		form = TagForm(request.GET)
+		if form.is_valid():
+			tag_ids = form.data.getlist('tag')
 
-	paginator = Paginator(consultas, 10)  # Muestra 10 consultas por página
+		if query: # Si hay algo ingresado en el buscador
+			consultas = Consulta.objects.filter(titulo__icontains=query) # Filtra las consultas por el título de estas
+		elif tag_ids:
+			consultas_tag = Consulta_tag.objects.filter(tag_id__in=tag_ids).values_list('consulta_id', flat=True)
+			consultas = Consulta.objects.filter(id__in=consultas_tag)
+		else:
+			consultas = Consulta.objects # Se devuelven todas las consultas ordenadas por fecha de creación en orden descendiente
+		consultas = consultas.order_by('-fecha_creacion')
 
-	page_number = request.GET.get('page') # Obtengo el número de la página que se esta mostrando
-	page_obj = paginator.get_page(page_number) # Obtengo el objeto página
-	page_tags = {}
+		paginator = Paginator(consultas, 10)  # Muestra 10 consultas por página
 
-	for consulta in page_obj:
-		tag_ids = Consulta_tag.objects.filter(consulta_id=consulta.id).values_list('tag_id', flat=True)
-		pre_list = Tag.objects.filter(id__in=tag_ids).values_list('nombre')
-		page_tags[consulta.id] = [elem[0] for elem in pre_list]
+		page_number = request.GET.get('page') # Obtengo el número de la página que se esta mostrando
+		page_obj = paginator.get_page(page_number) # Obtengo el objeto página
+		page_tags = {}
 
-	context = { # Se crea un diccionario el cual se le va entregar al html para obtener las referencias necesarias
-		'page_obj': page_obj, # Objeto página
-		'query': query, # Lo ingresado en el campo de la búsqueda. Esto es necesario para mantenerlo al cambiar de página
-		'tags': page_tags,
-	}
-	return render(request, 'forum.html', context) # Se muestra el template cuyo contexto es context
+		for consulta in page_obj:
+			tag_ids = Consulta_tag.objects.filter(consulta_id=consulta.id).values_list('tag_id', flat=True)
+			pre_list = Tag.objects.filter(id__in=tag_ids).values_list('nombre')
+			page_tags[consulta.id] = [elem[0] for elem in pre_list]
+
+		tag_form = TagForm()
+
+		context = { # Se crea un diccionario el cual se le va entregar al html para obtener las referencias necesarias
+			'page_obj': page_obj, # Objeto página
+			'query': query, # Lo ingresado en el campo de la búsqueda. Esto es necesario para mantenerlo al cambiar de página
+			'tags': page_tags,
+			'form': tag_form,
+		}
+		return render(request, 'forum.html', context) # Se muestra el template cuyo contexto es context
 
 def register_user(request):
 	if request.method == 'GET':

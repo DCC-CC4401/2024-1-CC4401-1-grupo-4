@@ -1,11 +1,18 @@
 <div>
     <div>
-        <i class="fa fa-user-circle center"></i>
-        {% if consult.anonimo %}
-            <a>Anónimo</a>
-        {% else %}
-            <a href="#">{{ consult.creador.username }}</a>
-        {% endif %}
+		{% if consult.anonimo %}
+			<i class="fa fa-user-secret"></i>
+			<a>Anónimo</a>
+		{% else %}
+			{% if consult.creador.tipo == "ES" %}
+			<i class="fa fa-user-circle center"></i>
+			{% elif consult.creador.tipo == "PR" %}
+			<i class="fa fa-graduation-cap"></i>
+			{% else %}
+			<i class="fa fa-drivers-license"></i>
+			{% endif %}
+			<a href="{% url 'other_profile' consult.creador.id %}">{{ consult.creador.username }}</a>
+		{% endif %}
     </div>
     <h2>{{consult.titulo}}</h2>
     <p>{{consult.mensaje|safe}}</p>
@@ -29,7 +36,7 @@
 
             <p>{{ answer.mensaje|safe}}</p>
 			{% if answer.multimedia %}
-				<img src="{{ answer.multimedia }}" alt="foto de respuesta">
+				<img src="{{ answer.multimedia }}" alt="foto de respuesta"><br><br>
 			{% endif %}
             <div>
                 <button class="btn btn-sm btn-outline-danger shadow like-button" data-id="{{ answer.id }}"><i class="fa fa-arrow-up"></i></button>

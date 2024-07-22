@@ -74,7 +74,6 @@ class Respuesta(models.Model):
 class Consulta_respuesta(models.Model):
     consulta=models.ForeignKey(Consulta,blank=False,null=False,on_delete=models.CASCADE)
     respuesta=models.ForeignKey(Respuesta,blank=True,null=True,on_delete=models.CASCADE)
-    
 
 
 #Esta clase se usara para crear la tabla Consulta-respuesta que crea la relación entre las tablas Consulta y Tag.
