@@ -6,7 +6,7 @@ from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from .forms import ConsultaForm, AnswerForm
-from .models import Consulta, Usuario, Tag, Consulta_tag, Consulta_respuesta, Respuesta
+from .models import Consulta, Usuario, Tag, Consulta_tag, Respuesta
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -15,24 +15,24 @@ from django.http import JsonResponse
 
 @login_required(login_url='/')
 def publish_message(request):
-    if request.method == "GET":
-        form = ConsultaForm()  #Si la request es de tipo GET se crea un formulario vacío y se renderiza
-        return render(request, 'stack_overbuxef/publish.html', {'form': form})
-    if request.method == "POST":
-        form = ConsultaForm(request.POST, request.FILES) #Si la request es de tipo POST se crea un formulario con los datos recibidos
-        if form.is_valid():
-            consulta = form.save(commit= False)
-            consulta.creador_id = request.user.id  #Se asigna el creador de la consulta como el usuario que está logueado
-            consulta.save() #Se guarda la consulta en la base de datos
-            if (request.FILES.get('multimedia')): # Si se subió una foto
-                file_name = default_storage.save(rf"fotos_consultas/{consulta.multimedia}", request.FILES.get('multimedia')) # Se guarda la multimedia en la carpeta correspondiente
-                consulta.multimedia = rf"media/{file_name}" # Se guarda la multimedia en la consulta
-            # Guardar los tags seleccionados en la tabla de relación Consulta_tag
-            tags = form.cleaned_data.get('tag')
-            for tag in tags:
-                Consulta_tag.objects.create(consulta=consulta, tag=tag)
-            return redirect('forum')
-        return render(request, 'stack_overbuxef/publish.html', {'form': form}) # Si el formulario no es válido se renderiza nuevamente el formulario con los errores
+	if request.method == "GET":
+		form = ConsultaForm()  #Si la request es de tipo GET se crea un formulario vacío y se renderiza
+		return render(request, 'stack_overbuxef/publish.html', {'form': form})
+	if request.method == "POST":
+		form = ConsultaForm(request.POST, request.FILES) #Si la request es de tipo POST se crea un formulario con los datos recibidos
+		if form.is_valid():
+			consulta = form.save(commit= False)
+			consulta.creador_id = request.user.id  #Se asigna el creador de la consulta como el usuario que está logueado
+			consulta.save() #Se guarda la consulta en la base de datos
+			if (request.FILES.get('multimedia')): # Si se subió una foto
+				file_name = default_storage.save(rf"fotos_consultas/{consulta.multimedia}", request.FILES.get('multimedia')) # Se guarda la multimedia en la carpeta correspondiente
+				consulta.multimedia = rf"media/{file_name}" # Se guarda la multimedia en la consulta
+			# Guardar los tags seleccionados en la tabla de relación Consulta_tag
+			tags = form.cleaned_data.get('tag')
+			for tag in tags:
+				Consulta_tag.objects.create(consulta=consulta, tag=tag)
+			return redirect('forum')
+		return render(request, 'stack_overbuxef/publish.html', {'form': form}) # Si el formulario no es válido se renderiza nuevamente el formulario con los errores
 
 @login_required(login_url='/')
 def forum(request):
@@ -103,8 +103,8 @@ def login_user(request):
 		return HttpResponseRedirect('/register')
 
 def logout_user(request):
-    logout(request)
-    return HttpResponseRedirect('/')
+	logout(request)
+	return HttpResponseRedirect('/')
 
 @login_required
 def profile(request, user_id=None):
@@ -294,35 +294,61 @@ def dislike_answer(request, id):
 
 @login_required
 def like_consulta(request, id):
-    consulta = get_object_or_404(Consulta, id=id) # Se obtiene la consulta con el id proporcionado o devolver un error 404 si no existe
-    
-    if request.user in consulta.users_liked.all():  # Se verifica si el usuario ha dado un 'like' a la consulta
-        consulta.users_liked.remove(request.user) #Se elimina al usuario de la lista de 'liked'
-        consulta.votar -= 1 # Incrementar el contador de votos
-    else:
-        if request.user in consulta.users_disliked.all(): # Si el usuario ha dado un 'dislike' previamente
-            consulta.users_disliked.remove(request.user) # Se elimina al usuario de la lista de 'disliked'
-            consulta.votar += 1  # Si estaba en dislike, incrementamos
-        consulta.users_liked.add(request.user)  # Se agrega al usuario a la lista de 'liked'
-        consulta.votar += 1 #Se incrementa
-    
-    consulta.save() #Se guarda los cambios hechos
-    return JsonResponse({'votar': consulta.votar}) #Se devuelve una respuesta json con el nuevo contador
+	consulta = get_object_or_404(Consulta, id=id) # Se obtiene la consulta con el id proporcionado o devolver un error 404 si no existe
+	
+	if request.user in consulta.users_liked.all():  # Se verifica si el usuario ha dado un 'like' a la consulta
+		consulta.users_liked.remove(request.user) #Se elimina al usuario de la lista de 'liked'
+		consulta.votar -= 1 # Incrementar el contador de votos
+	else:
+		if request.user in consulta.users_disliked.all(): # Si el usuario ha dado un 'dislike' previamente
+			consulta.users_disliked.remove(request.user) # Se elimina al usuario de la lista de 'disliked'
+			consulta.votar += 1  # Si estaba en dislike, incrementamos
+		consulta.users_liked.add(request.user)  # Se agrega al usuario a la lista de 'liked'
+		consulta.votar += 1 #Se incrementa
+	
+	consulta.save() #Se guarda los cambios hechos
+	return JsonResponse({'votar': consulta.votar}) #Se devuelve una respuesta json con el nuevo contador
 
 
 @login_required
 def dislike_consulta(request, id):
-    consulta = get_object_or_404(Consulta, id=id) # Se obtiene la consulta con el id proporcionado o devolver un error 404 si no existe
-    
-    if request.user in consulta.users_disliked.all(): # Se verifica si el usuario ha dado un 'dislike' a la consulta
-        consulta.users_disliked.remove(request.user) #Se elimina al usuario de la lista de 'disliked'
-        consulta.votar += 1 #Se incrementa en uno
-    else:
-        if request.user in consulta.users_liked.all(): # Si el usuario ha dado un 'like' previamente
-            consulta.users_liked.remove(request.user)  # Se elimina al usuario de la lista de 'liked'
-            consulta.votar -= 1  # Si estaba en like, se disminuye en uno votar
-        consulta.users_disliked.add(request.user) # Se agrega al usuario a la lista de 'disliked'
-        consulta.votar -= 1 #Se resta uno a votar
-    
-    consulta.save() #Se guardan los cambios hechos
-    return JsonResponse({'votar': consulta.votar}) #Se devuelve una respuesta json con el nuevo contador
+	consulta = get_object_or_404(Consulta, id=id) # Se obtiene la consulta con el id proporcionado o devolver un error 404 si no existe
+	
+	if request.user in consulta.users_disliked.all(): # Se verifica si el usuario ha dado un 'dislike' a la consulta
+		consulta.users_disliked.remove(request.user) #Se elimina al usuario de la lista de 'disliked'
+		consulta.votar += 1 #Se incrementa en uno
+	else:
+		if request.user in consulta.users_liked.all(): # Si el usuario ha dado un 'like' previamente
+			consulta.users_liked.remove(request.user)  # Se elimina al usuario de la lista de 'liked'
+			consulta.votar -= 1  # Si estaba en like, se disminuye en uno votar
+		consulta.users_disliked.add(request.user) # Se agrega al usuario a la lista de 'disliked'
+		consulta.votar -= 1 #Se resta uno a votar
+	
+	consulta.save() #Se guardan los cambios hechos
+	return JsonResponse({'votar': consulta.votar}) #Se devuelve una respuesta json con el nuevo contador
+
+
+@login_required
+def consulta_like_dislike(request, id):
+	consulta = get_object_or_404(Consulta, id=id)
+	voto = 0
+
+	if request.user in consulta.users_liked.all():
+		voto = 1
+	elif request.user in consulta.users_disliked.all():
+		voto = 2
+
+	return JsonResponse({'voto': voto})
+
+
+@login_required
+def answer_like_dislike(request, id):
+	respuesta = get_object_or_404(Respuesta, id=id)
+	voto = 0
+
+	if request.user in respuesta.users_liked.all():
+		voto = 1
+	elif request.user in respuesta.users_disliked.all():
+		voto = 2
+
+	return JsonResponse({'voto': voto})

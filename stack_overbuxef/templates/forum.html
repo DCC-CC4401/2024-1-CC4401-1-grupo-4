@@ -202,6 +202,21 @@
     </div>
     <script>
     $(document).ready(function(){
+		// Mostrar like o dislike al cargar la página
+		$('.like-button-consulta').each(function() {
+			let consultId = $(this).data('id');
+			$.ajax({
+                url: '/votePost/' + consultId + '/',
+                success: function(data) {
+					let voto = data.voto;
+					if (voto == 1)
+						$('.like-button-consulta[data-id="' + consultId + '"]').toggleClass('bg-danger text-white');
+					else if (voto == 2)
+						$('.dislike-button-consulta[data-id="' + consultId + '"]').toggleClass('bg-danger text-white');
+                }
+            });
+		});
+
         // Modal para respuestas
         $('.consult-link').click(function(){
             var consultId = $(this).data('id');
@@ -249,8 +264,8 @@
                 success: function(data) {
 					let plus = (data.votar > 0) ? "+" : ""
                     $('#votar-' + consultId).text(plus + data.votar);
-                    $('.like-button-consulta[data-id="' + consultId + '"]').toggleClass('selected');
-                    $('.dislike-button-consulta[data-id="' + consultId + '"]').removeClass('selected'); // Elimina el estado de dislike
+                    $('.like-button-consulta[data-id="' + consultId + '"]').toggleClass('selected bg-danger text-white');
+                    $('.dislike-button-consulta[data-id="' + consultId + '"]').removeClass('selected bg-danger text-white'); // Elimina el estado de dislike
                 }
             });
         });
@@ -263,8 +278,8 @@
                 success: function(data) {
 					let plus = (data.votar > 0) ? "+" : ""
                     $('#votar-' + consultId).text(plus + data.votar);
-                    $('.dislike-button-consulta[data-id="' + consultId + '"]').toggleClass('selected');
-                    $('.like-button-consulta[data-id="' + consultId + '"]').removeClass('selected'); // Elimina el estado de like
+                    $('.dislike-button-consulta[data-id="' + consultId + '"]').toggleClass('selected bg-danger text-white');
+                    $('.like-button-consulta[data-id="' + consultId + '"]').removeClass('selected bg-danger text-white'); // Elimina el estado de like
                 }
             });
         });

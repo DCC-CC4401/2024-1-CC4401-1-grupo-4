@@ -26,7 +26,9 @@ urlpatterns = [
     path('like/<int:id>/', views.like_consulta, name='like_consulta'),
     path('dislike/<int:id>/', views.dislike_consulta, name='dislike_consulta'),
     path('like1/<int:id>/', views.like_answer, name='like_answer'),
-    path('dislike1/<int:id>/', views.dislike_answer, name='dislike_answer')
+    path('dislike1/<int:id>/', views.dislike_answer, name='dislike_answer'),
+    path('votePost/<int:id>/', views.consulta_like_dislike, name='consulta_like_dislike'),
+    path('voteAnswer/<int:id>/', views.answer_like_dislike, name='answer_like_dislike'),
 ]
 
 if settings.DEBUG:

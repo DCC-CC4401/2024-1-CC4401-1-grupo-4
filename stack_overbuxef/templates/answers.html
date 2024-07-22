@@ -56,6 +56,21 @@
 </div>
 <script>
     $(document).ready(function() {
+		// Mostrar like o dislike al cargar la página
+		$('.like-button').each(function() {
+			let answerId = $(this).data('id');
+			$.ajax({
+                url: '/voteAnswer/' + answerId + '/',
+                success: function(data) {
+					let voto = data.voto;
+					if (voto == 1)
+						$('.like-button[data-id="' + answerId + '"]').toggleClass('bg-danger text-white');
+					else if (voto == 2)
+						$('.dislike-button[data-id="' + answerId + '"]').toggleClass('bg-danger text-white');
+                }
+            });
+		});
+
         $('.like-button').click(function() {
             var answerId = $(this).data('id');
             $.ajax({
@@ -63,8 +78,8 @@
                 success: function(data) {
                     let plus = (data.votar > 0) ? "+" : ""
                     $('#votar-' +answerId).text(plus + data.votar);
-                    $('.like-button[data-id="' + answerId + '"]').toggleClass('selected');
-                    $('.dislike-button[data-id="' + answerId + '"]').removeClass('selected'); // Elimina el estado de dislike
+                    $('.like-button[data-id="' + answerId + '"]').toggleClass('selected bg-danger text-white');
+                    $('.dislike-button[data-id="' + answerId + '"]').removeClass('selected bg-danger text-white'); // Elimina el estado de dislike
                 }
             });
         });
@@ -75,8 +90,8 @@
                 success: function(data) {
                     let plus = (data.votar > 0) ? "+" : ""
                     $('#votar-' + answerId).text(plus + data.votar);
-                    $('.dislike-button[data-id="' + answerId + '"]').toggleClass('selected');
-                    $('.like-button[data-id="' + answerId + '"]').removeClass('selected');
+                    $('.dislike-button[data-id="' + answerId + '"]').toggleClass('selected bg-danger text-white');
+                    $('.like-button[data-id="' + answerId + '"]').removeClass('selected bg-danger text-white');
                 }
             });
         });
