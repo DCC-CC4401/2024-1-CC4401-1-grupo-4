@@ -16,6 +16,9 @@
     </div>
     <h2>{{consult.titulo}}</h2>
     <p>{{consult.mensaje|safe}}</p>
+	{% if consult.multimedia %}
+		<img src="media/fotos_consultas/{{ consult.multimedia }}" alt="foto de consulta"><br><br>
+	{% endif %}
     <div>
         {% for answer in page_obj %}
         <div>
